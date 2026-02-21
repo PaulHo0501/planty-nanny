@@ -23,17 +23,31 @@ void PlantyNanny::cameraSetup() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 5000000;
-  config.frame_size = FRAMESIZE_VGA;
+  config.frame_size = FRAMESIZE_UXGA;
   config.pixel_format = PIXFORMAT_JPEG;
   // config.grab_mode = CAMERA_GRAB_LATEST;
   config.fb_location = CAMERA_FB_IN_PSRAM;
-  config.jpeg_quality = 15;
+  config.jpeg_quality = 5;
   config.fb_count = 1;
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
       Serial.printf("Camera init failed with error 0x%x", err);
       return;
+  }
+  sensor_t * s = esp_camera_sensor_get();
+  if (s != NULL) {
+    s->set_contrast(s, 1);       // Bump contrast slightly (0 to 2)
+    s->set_saturation(s, 1);     // Make colors pop slightly (0 to 2)
+    s->set_whitebal(s, 1);       // Enable Auto White Balance
+    s->set_awb_gain(s, 1);       // Enable Auto White Balance Gain
+    s->set_exposure_ctrl(s, 1);  // Enable Auto Exposure
+    s->set_gain_ctrl(s, 1);      // Enable Auto Gain (helps in low light)
+    
+    // Critical Fixes for OV2640 Sensors
+    s->set_bpc(s, 1);            // Enable Black Pixel Correction (removes dead pixels)
+    s->set_wpc(s, 1);            // Enable White Pixel Correction (removes hot pixels)
+    s->set_lenc(s, 1);           // Enable Lens Correction (fixes dark vignetting in corners)
   }
   Serial.println("[PN] Done Camera Setup");
   return;
@@ -100,16 +114,12 @@ void PlantyNanny::captureImage() {
       Serial.println("Camera capture failed");
       return;
   }
-  // 1. Set up the HTTP Client
   WiFiClient client;
   HTTPClient http;
   http.begin(client, "http://192.168.1.74:8080/api/camera/upload");
 
-  // 2. Tell the server we are sending raw JPEG binary data, not text or forms
   http.addHeader("Content-Type", "image/jpeg");
 
-  // 3. Send the raw buffer directly! 
-  // This blocks the thread for a moment, but WON'T drop the WebSocket!
   int httpResponseCode = http.POST(fb->buf, fb->len);
 
   if (httpResponseCode > 0) {
@@ -118,7 +128,6 @@ void PlantyNanny::captureImage() {
       Serial.printf("HTTP POST Error: %s\n", http.errorToString(httpResponseCode).c_str());
   }
 
-  // 4. Cleanup
   http.end();
   esp_camera_fb_return(fb); 
   Serial.println("Capture and upload cycle complete.");
