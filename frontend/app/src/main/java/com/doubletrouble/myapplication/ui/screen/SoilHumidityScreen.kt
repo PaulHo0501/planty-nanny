@@ -64,7 +64,7 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
         while (isPressed) {
             progress.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
+                animationSpec = tween(durationMillis = 1500, easing = LinearEasing)
             )
             Log.d("MOTOR", "Target position reached - Now watering")
         }
@@ -123,8 +123,7 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 icon = ImageVector.vectorResource(id = R.drawable.ic_water),
-                text = if (progress.value == 0f) "Hold to manually water"
-                else if (progress.value > 0f && progress.value < 1f) "The motor is positioning"
+                text = if (progress.value in 0f..<1f) "Hold to manually water"
                 else "Watering in progress . . .",
                 onClick = {},
                 interactionSource = interactionSource,
@@ -178,6 +177,6 @@ private fun highlightedText(text: String) : AnnotatedString {
 @Composable
 fun SoilHumidityPreview() {
     PlantyNannyTheme {
-        SoilHumidityScreen({})
+        SoilHumidityScreen {}
     }
 }

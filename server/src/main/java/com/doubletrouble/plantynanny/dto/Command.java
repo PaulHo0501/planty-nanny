@@ -1,5 +1,6 @@
-package com.doubletrouble.plantynanny.messages;
+package com.doubletrouble.plantynanny.dto;
 
+import com.doubletrouble.plantynanny.enums.CommandType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

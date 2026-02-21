@@ -1,5 +1,7 @@
-package com.doubletrouble.plantynanny.messages;
+package com.doubletrouble.plantynanny.controller;
 
+import com.doubletrouble.plantynanny.dto.Command;
+import com.doubletrouble.plantynanny.dto.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;

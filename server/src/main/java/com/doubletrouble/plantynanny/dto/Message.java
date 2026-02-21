@@ -1,4 +1,4 @@
-package com.doubletrouble.plantynanny.messages;
+package com.doubletrouble.plantynanny.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

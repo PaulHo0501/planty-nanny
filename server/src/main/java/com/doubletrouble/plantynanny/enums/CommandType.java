@@ -1,4 +1,4 @@
-package com.doubletrouble.plantynanny.messages;
+package com.doubletrouble.plantynanny.enums;
 
 public enum CommandType {
     WATER,

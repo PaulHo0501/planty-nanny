@@ -1,4 +1,4 @@
-package com.doubletrouble.plantynanny;
+package com.doubletrouble.plantynanny.service;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
