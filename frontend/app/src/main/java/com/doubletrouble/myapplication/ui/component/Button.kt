@@ -1,5 +1,5 @@
 package com.doubletrouble.myapplication.ui.component
-
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,13 +23,15 @@ fun Button(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
+    interactionSource:  MutableInteractionSource? = null
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        interactionSource = interactionSource
     ) {
         if (icon != null) {
             Icon(
@@ -45,7 +47,7 @@ fun Button(
     }
 }
 
-@Preview(showBackground = true, name = "Button Preview")
+@Preview(showBackground = true, name = "Primary Button Preview")
 @Composable
 fun PrimaryButtonPreview() {
     PlantyNannyTheme {

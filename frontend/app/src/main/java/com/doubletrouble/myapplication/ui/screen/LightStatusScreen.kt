@@ -1,5 +1,4 @@
 package com.doubletrouble.myapplication.ui.screen
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
@@ -46,7 +45,7 @@ import com.doubletrouble.myapplication.ui.theme.VanillaCream
 
 @Composable
 fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
-    val hoursOn = 6
+    val hoursOn = 2
     var lightStatus by remember { mutableStateOf("ON") }
 
     Column(
@@ -136,11 +135,6 @@ fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
             }
         }
     }
-}
-
-@Composable
-fun MutableStateOf(x0: String) {
-    TODO("Not yet implemented")
 }
 
 private fun highlightedText(text: String, color : Color) : AnnotatedString {
