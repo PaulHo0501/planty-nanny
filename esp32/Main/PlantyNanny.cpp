@@ -37,6 +37,7 @@ void PlantyNanny::cameraSetup() {
   }
   sensor_t * s = esp_camera_sensor_get();
   if (s != NULL) {
+    s->set_vflip(s, 1);
     s->set_contrast(s, 1);       // Bump contrast slightly (0 to 2)
     s->set_saturation(s, 1);     // Make colors pop slightly (0 to 2)
     s->set_whitebal(s, 1);       // Enable Auto White Balance
@@ -116,7 +117,7 @@ void PlantyNanny::captureImage() {
   }
   WiFiClient client;
   HTTPClient http;
-  http.begin(client, "http://192.168.1.74:8080/api/camera/upload");
+  http.begin(client, uploadLink);
 
   http.addHeader("Content-Type", "image/jpeg");
 

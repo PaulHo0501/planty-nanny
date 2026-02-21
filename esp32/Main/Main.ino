@@ -11,9 +11,6 @@ WiFiMulti wifiMulti;
 WebSocketsClient webSocket;
 PlantyNanny pn;
 
-const char* ws_host = "192.168.1.74";
-const int ws_port   = 8080; 
-
 // Variables for non-blocking timer
 unsigned long lastSendTime = 0;
 const unsigned long sendInterval = 5000; // Send every 5 seconds
@@ -117,7 +114,7 @@ void setup() {
 
     // WebSocket Setup
     // Note: Remove the trailing slash in the URL if your server config is strict
-    webSocket.begin(ws_host, ws_port, "/gs-guide-websocket"); 
+    webSocket.begin(WS_HOST, WS_PORT, "/gs-guide-websocket"); 
     webSocket.onEvent(webSocketEvent);
     webSocket.setReconnectInterval(5000);
     
