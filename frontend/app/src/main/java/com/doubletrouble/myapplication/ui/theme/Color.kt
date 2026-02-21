@@ -9,7 +9,7 @@ val MutedOlive = Color(0xFFADC178)
 
 val HunterGreen = Color(0xFF3A5A40)
 
-val FadedCopper = Color(0xFFA98467)
+val VibrantCoral = Color(0xFFE26D5C)
 
 val AshBrown = Color(0xFF6C584C)
 

@@ -27,8 +27,11 @@ import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
 
 @Composable
-fun HomePlantScreen() {
-    val soilHumidity = listOf(80, 75, 40, 30, 90, 95, 85)
+fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
+                    onNavigateToTankWaterLevel: () -> Unit,
+                    onNavigateToLightStatus: () -> Unit,
+                    onNavigateToHealthCondition: () -> Unit) {
+    val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
     val currentSoilHumidity = 36
     val currentWaterHumidity = 69
     val healthCondition = "Good"
@@ -73,16 +76,26 @@ fun HomePlantScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 item {
-                    CustomCard(title = "Soil Humidity", currentPercentage = currentSoilHumidity, dataList = soilHumidity)
+                    CustomCard(title = "Soil Humidity",
+                        currentPercentage = currentSoilHumidity,
+                        dataList = soilHumidity,
+                        onClick = onNavigateToSoilHumidity)
                 }
                 item {
-                    CustomCard(title = "Tank Water Level", currentPercentage = currentWaterHumidity)
+                    CustomCard(title = "Tank Water Level",
+                        currentPercentage = currentWaterHumidity,
+                        onClick = onNavigateToTankWaterLevel)
                 }
                 item {
-                    CustomCard(title = "Health Condition", status = healthCondition)
+                    CustomCard(title = "Health Condition",
+                        status = healthCondition.replaceFirstChar { it.uppercase() },
+                        onClick = onNavigateToHealthCondition)
                 }
                 item {
-                    CustomCard(title = "Light", status = lightStatus.uppercase(), label = "For $lightHours hours")
+                    CustomCard(title = "Light",
+                        status = lightStatus.uppercase(),
+                        label = "For $lightHours hours",
+                        onClick = onNavigateToLightStatus)
                 }
             }
         }
@@ -94,6 +107,6 @@ fun HomePlantScreen() {
 @Composable
 fun MainScreenPreview() {
     PlantyNannyTheme {
-        HomePlantScreen()
+        HomePlantScreen({}, {}, {}, {})
     }
 }
