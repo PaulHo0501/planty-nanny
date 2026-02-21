@@ -31,7 +31,7 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
                     onNavigateToTankWaterLevel: () -> Unit,
                     onNavigateToLightStatus: () -> Unit,
                     onNavigateToHealthCondition: () -> Unit) {
-    val soilHumidity = listOf(80, 75, 40, 30, 90, 95, 85)
+    val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
     val currentSoilHumidity = 36
     val currentWaterHumidity = 69
     val healthCondition = "Good"

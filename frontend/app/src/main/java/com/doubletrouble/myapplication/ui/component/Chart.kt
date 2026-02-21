@@ -1,5 +1,4 @@
 package com.doubletrouble.myapplication.ui.component
-
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.Gold
@@ -41,18 +41,22 @@ import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.ScarletRush
 
 @Composable
-fun Chart(dataPoints: List<Int>, showAxis: Boolean = false, labels : List<String>? = null) {
+fun Chart(dataPoints: List<Int>,
+          showAxis: Boolean = false,
+          labels : List<String>? = null,
+          height : Dp? = null,
+          spacedBy: Dp? = null) {
     var animationPlayed by remember { mutableStateOf(false) }
     val textMeasurer = rememberTextMeasurer()
-    val labelStyle = MaterialTheme.typography.bodySmall
+    val labelStyle = MaterialTheme.typography.bodyMedium
 
     LaunchedEffect(Unit) {
         animationPlayed = true
     }
 
     Box(modifier = Modifier.fillMaxWidth()
-        .height(100.dp)
-        .padding(12.dp)
+        .height(height ?: 100.dp)
+        .padding(horizontal = 12.dp, vertical = if (showAxis && !labels.isNullOrEmpty()) 20.dp else 12.dp)
     ) {
         if (showAxis && !labels.isNullOrEmpty()) {
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -108,7 +112,8 @@ fun Chart(dataPoints: List<Int>, showAxis: Boolean = false, labels : List<String
                         topLeft = Offset(
                             x = xPos - (textWidth / 2),
                             y = size.height + 4.dp.toPx()
-                        )
+                        ),
+                        color = BlackGrey
                     )
                 }
             }
@@ -117,7 +122,7 @@ fun Chart(dataPoints: List<Int>, showAxis: Boolean = false, labels : List<String
         Row(
             modifier = Modifier.fillMaxSize()
                 .padding(if (showAxis && !labels.isNullOrEmpty()) 12.dp else 0.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacedBy ?: 8.dp),
             verticalAlignment = Alignment.Bottom
         ) {
             dataPoints.forEach { percentage ->
@@ -150,7 +155,7 @@ fun ChartPreview() {
     PlantyNannyTheme {
         Box(modifier = Modifier.size(300.dp),
             contentAlignment = Alignment.Center) {
-            Chart(dataPoints = listOf(10, 20, 30, 40, 90, 60, 70),
+            Chart(dataPoints = listOf(10, 20, 30, 40, 90, 70),
                 showAxis = true,
                 labels = listOf("1 PM", "2 PM", "3 PM"))
         }

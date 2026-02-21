@@ -55,7 +55,7 @@ fun PlantyApp() {
         }
 
         composable("soil_humidity") {
-            SoilHumidityScreen()
+            SoilHumidityScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("tank_water_level") {
