@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.ui.theme.HunterGreen
-import com.doubletrouble.myapplicaiton.ui.theme.TeaGreen
+import com.doubletrouble.myapplication.ui.theme.TeaGreen
 
 @Composable
 fun ProgressIndicator(progress: Float = 0.5f) {
