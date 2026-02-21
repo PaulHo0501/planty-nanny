@@ -4,6 +4,10 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 #include <ArduinoJson.h>
+#include "esp32_camera.h"
+#include "board_config.h"
+
+extern void sendStompSend(String destination, String jsonBody);
 
 class PlantyNanny {
 private:
@@ -18,11 +22,13 @@ private:
   // soil sensor here
 public:
   void pnSetup();
+  void cameraSetup();
   int processCommand(String incomingCommand);
   int commandWater();
   int commandLight();
   int commandMeasure();
   int commandPicture();
+  unsigned char* captureImage();
 };
 
 #endif
