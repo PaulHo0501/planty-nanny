@@ -70,6 +70,7 @@ public class TreeController {
         String name = treeRepository.findFirstBy().map(Tree::getName).orElse(null);
         if (!Objects.isNull(name)) {
             String generatedFact  = geminiService.askGemini("Give me a random, short and cool fact about %s. Your response should be a single sentence only, have no markdown marker, just pure text.".formatted(name));
+            System.out.println("Fact generated: " + generatedFact);
             return ResponseEntity.ok(generatedFact);
         }
         return ResponseEntity.notFound().build();

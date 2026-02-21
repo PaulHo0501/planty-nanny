@@ -17,6 +17,8 @@ foundationLayout = "1.10.3"
 lottieCompose = "6.7.1"
 converterScalars = "3.0.0"
 squareupRetrofitVersion = "3.0.0"
+kotlinxSerializationJson = "1.10.0"
+retrofit2KotlinxSerializationConverter = "1.0.0"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
@@ -45,6 +47,8 @@ androidx-compose-material-icons-core = { group = "androidx.compose.material", na
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 retrofit-v300 = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofitVersion" }
 converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterScalars" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
