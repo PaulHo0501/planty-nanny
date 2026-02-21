@@ -1,5 +1,6 @@
 package com.doubletrouble.myapplication.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -68,7 +69,7 @@ fun AddPlantScreen(onNavigateToAddPlantFinished: () -> Unit) {
                 text = "Identify Your Plant",
                 style = MaterialTheme.typography.headlineMedium,
                 color = BlackGrey,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 44.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 50.dp)
             )
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -107,7 +108,7 @@ fun ScanningResult(plantName: String = "Old Lady Cactus",
             text = "Your Plant is ...",
             style = MaterialTheme.typography.headlineMedium,
             color = BlackGrey,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 44.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 50.dp)
         )
         Column(
             modifier = Modifier.padding(8.dp),
@@ -126,7 +127,7 @@ fun ScanningResult(plantName: String = "Old Lady Cactus",
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = plantDescription,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = BlackGrey,
                 )
             }
@@ -143,7 +144,7 @@ fun ScanningResult(plantName: String = "Old Lady Cactus",
                         painter = painter,
                         contentDescription = plantName,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxWidth(.9f).aspectRatio(1f)
+                        modifier = Modifier.fillMaxWidth(0.9f).aspectRatio(1f)
                             .drawWithCache {
                                 val outline = RoundedCornerShape(16.dp).createOutline(size, layoutDirection, this)
                                 val path = Path().apply { addOutline(outline) }
@@ -169,7 +170,7 @@ fun ScanningResult(plantName: String = "Old Lady Cactus",
                     )
                 }
                 is AsyncImagePainter.State.Error -> {
-                    // Show some error UI.
+                    Log.d("ERROR", "Unable to retrieve image")
                 }
             }
 
@@ -186,7 +187,6 @@ fun ScanningResult(plantName: String = "Old Lady Cactus",
 @Composable
 fun AddPlantScreenPreview() {
     PlantyNannyTheme {
-//        AddPlantScreen({})
         ScanningResult(onNavigateToAddPlantFinished = {})
     }
 

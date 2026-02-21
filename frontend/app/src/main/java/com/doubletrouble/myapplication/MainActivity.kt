@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.doubletrouble.myapplication.ui.screen.AddPlantScreen
 import com.doubletrouble.myapplication.ui.screen.HomeNoPlantScreen
+import com.doubletrouble.myapplication.ui.screen.HomePlantScreen
 import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 
@@ -31,15 +32,19 @@ fun PlantyApp() {
 
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") {
-            WelcomeScreen(onNavigateToHome = { navController.navigate("home") })
+            WelcomeScreen(onNavigateToHome = { navController.navigate("home_no_plant") })
         }
 
-        composable("home") {
+        composable("home_no_plant") {
             HomeNoPlantScreen(onNavigateToAddPlant = { navController.navigate("add_plant") })
         }
 
         composable("add_plant") {
-            AddPlantScreen(onNavigateToAddPlantFinished = {})
+            AddPlantScreen(onNavigateToAddPlantFinished = {navController.navigate(route = "home_plant")})
+        }
+
+        composable("home_plant") {
+            HomePlantScreen()
         }
     }
 }

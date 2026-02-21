@@ -39,7 +39,7 @@ fun HomeNoPlantScreen(onNavigateToAddPlant: () -> Unit) {
             text = "Your Plant",
             style = MaterialTheme.typography.headlineMedium,
             color = BlackGrey,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 44.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 50.dp)
         )
         Column(
             modifier = Modifier.fillMaxSize(),
