@@ -1,8 +1,5 @@
 package com.doubletrouble.myapplication
 
-import com.doubletrouble.myapplication.ui.screen.HomeScreen
-import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
-import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.doubletrouble.myapplication.ui.screen.AddPlantScreen
+import com.doubletrouble.myapplication.ui.screen.HomeNoPlantScreen
+import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
+import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,11 @@ fun PlantyApp() {
         }
 
         composable("home") {
-            HomeScreen(onNavigateToAddPlant = {})
+            HomeNoPlantScreen(onNavigateToAddPlant = { navController.navigate("add_plant") })
+        }
+
+        composable("add_plant") {
+            AddPlantScreen(onNavigateToAddPlantFinished = {})
         }
     }
 }
