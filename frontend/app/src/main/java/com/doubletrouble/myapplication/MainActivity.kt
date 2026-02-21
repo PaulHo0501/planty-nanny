@@ -5,9 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.doubletrouble.myapplication.data.CacheManager
+import com.doubletrouble.myapplication.data.RetrofitClient
 import com.doubletrouble.myapplication.ui.screen.AddPlantScreen
 import com.doubletrouble.myapplication.ui.screen.HealthConditionScreen
 import com.doubletrouble.myapplication.ui.screen.HomeNoPlantScreen
@@ -17,6 +24,7 @@ import com.doubletrouble.myapplication.ui.screen.SoilHumidityScreen
 import com.doubletrouble.myapplication.ui.screen.TankWaterLevelScreen
 import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
+import com.doubletrouble.myapplication.ui.viewmodel.AddPlantViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +42,12 @@ class MainActivity : ComponentActivity() {
 fun PlantyApp() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "welcome") {
+    val context = LocalContext.current
+    val cacheManager = remember { CacheManager(context) }
+
+    val startDest = if (cacheManager.getCachedName() != null) "home_plant" else "welcome"
+
+    NavHost(navController = navController, startDestination = startDest) {
         composable("welcome") {
             WelcomeScreen(onNavigateToHome = { navController.navigate("home_no_plant") })
         }
@@ -44,7 +57,21 @@ fun PlantyApp() {
         }
 
         composable("add_plant") {
-            AddPlantScreen(onNavigateToAddPlantFinished = {navController.navigate(route = "home_plant")})
+            val plantViewModel: AddPlantViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        // Pass your Retrofit singleton here!
+                        return AddPlantViewModel(RetrofitClient.apiService) as T
+                    }
+                }
+            )
+            AddPlantScreen(
+                viewModel = plantViewModel,
+                onNavigateToAddPlantFinished = {navController.navigate(route = "home_plant") {
+                    popUpTo("add_plant") { inclusive = true }
+                } }
+            )
         }
 
         composable("home_plant") {

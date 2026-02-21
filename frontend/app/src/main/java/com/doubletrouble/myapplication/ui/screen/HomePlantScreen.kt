@@ -36,15 +36,17 @@ import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import java.util.Objects
 
 @Composable
-fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
-                    onNavigateToTankWaterLevel: () -> Unit,
-                    onNavigateToLightStatus: () -> Unit,
-                    onNavigateToHealthCondition: () -> Unit) {
+fun HomePlantScreen(
+    onNavigateToSoilHumidity: () -> Unit,
+    onNavigateToTankWaterLevel: () -> Unit,
+    onNavigateToLightStatus: () -> Unit,
+    onNavigateToHealthCondition: () -> Unit
+) {
     val context = LocalContext.current
     val cacheManager = remember { CacheManager(context) }
 
     var name by remember { mutableStateOf("") }
-    var funFact by remember {mutableStateOf("")}
+    var funFact by remember { mutableStateOf("") }
 
     val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
     val currentSoilHumidity = 36
@@ -58,13 +60,13 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
 
         val localFact = cacheManager.getCachedFact()
         if (Objects.isNull(localFact)) {
-           try {
-               val fetchedFact = RetrofitClient.apiService.getFact()
-               funFact = fetchedFact
-               cacheManager.setFact(funFact)
-           } catch(e: Exception) {
-               e.printStackTrace()
-           }
+            try {
+                val fetchedFact = RetrofitClient.apiService.getFact()
+                funFact = fetchedFact
+                cacheManager.setFact(funFact)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -77,11 +79,13 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
             painter = painterResource(R.drawable.home_background_plant),
             contentDescription = "Home background",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(VanillaCream)
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(vertical = 50.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -102,30 +106,40 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
                 color = BlackGrey
             )
             Spacer(modifier = Modifier.height(8.dp))
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 item {
-                    CustomCard(title = "Soil Humidity",
+                    CustomCard(
+                        title = "Soil Humidity",
                         currentPercentage = currentSoilHumidity,
                         dataList = soilHumidity,
-                        onClick = onNavigateToSoilHumidity)
+                        onClick = onNavigateToSoilHumidity
+                    )
                 }
                 item {
-                    CustomCard(title = "Tank Water Level",
+                    CustomCard(
+                        title = "Tank Water Level",
                         currentPercentage = currentWaterHumidity,
-                        onClick = onNavigateToTankWaterLevel)
+                        onClick = onNavigateToTankWaterLevel
+                    )
                 }
                 item {
-                    CustomCard(title = "Health Condition",
+                    CustomCard(
+                        title = "Health Condition",
                         status = healthCondition.replaceFirstChar { it.uppercase() },
-                        onClick = onNavigateToHealthCondition)
+                        onClick = onNavigateToHealthCondition
+                    )
                 }
                 item {
-                    CustomCard(title = "Light",
+                    CustomCard(
+                        title = "Light",
                         status = lightStatus.uppercase(),
                         label = "For $lightHours hours",
-                        onClick = onNavigateToLightStatus)
+                        onClick = onNavigateToLightStatus
+                    )
                 }
             }
         }
