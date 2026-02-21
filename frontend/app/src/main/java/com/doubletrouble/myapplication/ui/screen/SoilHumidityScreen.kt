@@ -103,7 +103,7 @@ fun highlightedText(text: String) : AnnotatedString {
     )
 }
 
-@Preview(showBackground = true, name = "Soil Humidity Preview")
+@Preview(showBackground = true, name = "Soil Humidity Screen Preview")
 @Composable
 fun SoilHumidityPreview() {
     PlantyNannyTheme {

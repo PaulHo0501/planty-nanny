@@ -59,7 +59,7 @@ fun PlantyApp() {
         }
 
         composable("tank_water_level") {
-            TankWaterLevelScreen()
+            TankWaterLevelScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("health_condition") {
