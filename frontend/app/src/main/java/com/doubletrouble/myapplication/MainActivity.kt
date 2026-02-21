@@ -9,8 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.doubletrouble.myapplication.ui.screen.AddPlantScreen
+import com.doubletrouble.myapplication.ui.screen.HealthConditionScreen
 import com.doubletrouble.myapplication.ui.screen.HomeNoPlantScreen
 import com.doubletrouble.myapplication.ui.screen.HomePlantScreen
+import com.doubletrouble.myapplication.ui.screen.LightStatusScreen
+import com.doubletrouble.myapplication.ui.screen.SoilHumidityScreen
+import com.doubletrouble.myapplication.ui.screen.TankWaterLevelScreen
 import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 
@@ -44,7 +48,26 @@ fun PlantyApp() {
         }
 
         composable("home_plant") {
-            HomePlantScreen()
+            HomePlantScreen(onNavigateToSoilHumidity = {navController.navigate(route = "soil_humidity")},
+                onNavigateToTankWaterLevel = {navController.navigate(route = "tank_water_level")},
+                onNavigateToHealthCondition = {navController.navigate(route = "health_condition")},
+                onNavigateToLightStatus = {navController.navigate(route = "light_status")})
+        }
+
+        composable("soil_humidity") {
+            SoilHumidityScreen()
+        }
+
+        composable("tank_water_level") {
+            TankWaterLevelScreen()
+        }
+
+        composable("health_condition") {
+            HealthConditionScreen()
+        }
+
+        composable("light_status") {
+            LightStatusScreen()
         }
     }
 }
