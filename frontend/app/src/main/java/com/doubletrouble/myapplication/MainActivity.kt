@@ -1,18 +1,16 @@
 package com.doubletrouble.myapplication
 
+import com.doubletrouble.myapplication.ui.screen.HomeScreen
+import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
+import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,31 +18,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlantyNannyTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                PlantyApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun PlantyApp() {
+    val navController = rememberNavController()
 
-    Text(
-        text = "Welcome",
-        modifier = modifier,
-        style = MaterialTheme.typography.titleLarge
-    )
-}
+    NavHost(navController = navController, startDestination = "welcome") {
+        composable("welcome") {
+            WelcomeScreen(onNavigateToHome = { navController.navigate("home") })
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PlantyNannyTheme {
-        Greeting("Android")
+        composable("home") {
+            HomeScreen(onNavigateToAddPlant = {})
+        }
     }
 }

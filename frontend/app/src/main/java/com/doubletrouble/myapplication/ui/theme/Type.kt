@@ -1,4 +1,5 @@
 package com.doubletrouble.myapplication.ui.theme
+
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -16,7 +17,8 @@ val provider = GoogleFont.Provider(
 )
 
 val fontFamilyNunito = FontFamily(
-    Font(googleFont = GoogleFont("Nunito"), fontProvider = provider)
+    Font(googleFont = GoogleFont("Nunito"), fontProvider = provider, weight = FontWeight.SemiBold),
+    Font(googleFont = GoogleFont("Nunito"), fontProvider = provider, weight = FontWeight.Bold)
 )
 
 val fontFamilyPlaywrite = FontFamily(
@@ -26,7 +28,7 @@ val fontFamilyPlaywrite = FontFamily(
 val CustomTypography = Typography(
     bodyMedium = TextStyle(
         fontFamily = fontFamilyNunito,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.sp
@@ -42,7 +44,7 @@ val CustomTypography = Typography(
 
     headlineLarge = TextStyle(
         fontFamily = fontFamilyNunito,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 48.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp
@@ -50,7 +52,7 @@ val CustomTypography = Typography(
 
     headlineMedium = TextStyle(
         fontFamily = fontFamilyNunito,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp
@@ -58,7 +60,7 @@ val CustomTypography = Typography(
 
     headlineSmall = TextStyle(
         fontFamily = fontFamilyNunito,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
