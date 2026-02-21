@@ -33,7 +33,6 @@ import com.doubletrouble.myapplication.ui.theme.AshBrown
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
-import java.util.Objects
 
 @Composable
 fun HomePlantScreen(
@@ -59,14 +58,16 @@ fun HomePlantScreen(
         name = cacheManager.getCachedName() ?: ""
 
         val localFact = cacheManager.getCachedFact()
-        if (Objects.isNull(localFact)) {
+        if (localFact.isNullOrEmpty()) {
             try {
                 val fetchedFact = RetrofitClient.apiService.getFact()
                 funFact = fetchedFact
-                cacheManager.setFact(funFact)
+                cacheManager.setFact(fetchedFact)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        } else {
+            funFact = localFact
         }
     }
 

@@ -25,7 +25,7 @@ public class GeminiService {
 
     public TreeDto analyzePlantImage(String s3ImageUrl) {
         String promptText = "Analyze this image and identify the plant. " +
-                "Provide the common name of the tree/plant, a short description, " +
+                "Provide only one single common name of the tree/plant, a short description, " +
                 "the suggested humidity level (as an integer percentage), " +
                 "and the suggested light hours per day (as an integer).";
 
