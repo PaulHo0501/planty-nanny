@@ -63,11 +63,11 @@ fun PlantyApp() {
         }
 
         composable("health_condition") {
-            HealthConditionScreen()
+            HealthConditionScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("light_status") {
-            LightStatusScreen()
+            LightStatusScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
     }
 }
