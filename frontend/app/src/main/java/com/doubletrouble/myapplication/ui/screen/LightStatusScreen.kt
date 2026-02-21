@@ -1,4 +1,5 @@
 package com.doubletrouble.myapplication.ui.screen
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
@@ -22,13 +23,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.R
+import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.ui.component.LottieDisplay
 import com.doubletrouble.myapplication.ui.theme.AshBrown
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
@@ -45,8 +50,19 @@ import com.doubletrouble.myapplication.ui.theme.VanillaCream
 
 @Composable
 fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
+    val context = LocalContext.current
+    val cacheManager = remember { CacheManager(context) }
+
+    var name by remember { mutableStateOf("") }
+    var idealLightHours by remember { mutableIntStateOf(0) }
+
     val hoursOn = 2
     var lightStatus by remember { mutableStateOf("ON") }
+
+    LaunchedEffect(Unit) {
+        name = cacheManager.getCachedName() ?: ""
+        idealLightHours = cacheManager.getCachedIdealLightHours()
+    }
 
     Column(
         modifier = Modifier
@@ -79,20 +95,18 @@ fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = highlightedText("Old Lady Cactus ", HunterGreen) +
-                        AnnotatedString("loves sunlight and needs ") +
-                        highlightedText("8 hours ", HunterGreen) +
+                text = highlightedText("$name ", HunterGreen) +
+                        AnnotatedString("${getLightHoursPreference(idealLightHours)} sunlight and needs ") +
+                        highlightedText("$idealLightHours hours ", HunterGreen) +
                         AnnotatedString("of sunlight everyday to stay happy"),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth())
             Text(
-                text =  "Sunbathing still in progress . . .",
+                text =  if (lightStatus == "ON") "Sunbathing still in progress . . ."
+                else "Sunbathing done for today",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth())
-
-
-
             Column(modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
@@ -137,6 +151,11 @@ fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
     }
 }
 
+private fun getLightHoursPreference(hours: Int) : String {
+    return if (hours >= 6) "loves"
+    else if (hours >= 3) "likes"
+    else "tolerates"
+}
 private fun highlightedText(text: String, color : Color) : AnnotatedString {
     return AnnotatedString(
         text = text,

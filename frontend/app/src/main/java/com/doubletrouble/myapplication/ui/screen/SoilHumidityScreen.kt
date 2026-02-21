@@ -25,7 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -37,6 +40,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -44,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.R
+import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.ui.component.Chart
 import com.doubletrouble.myapplication.ui.component.Button
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
@@ -54,11 +59,23 @@ import com.doubletrouble.myapplication.ui.theme.VanillaCream
 
 @Composable
 fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
+    val context = LocalContext.current
+    val cacheManager = remember { CacheManager(context) }
+
+    var name by remember { mutableStateOf("") }
+    var idealSoilHumidity by remember { mutableIntStateOf(0) }
+
     val dataPoints = listOf(10, 20, 30, 40, 50, 90, 12, 38)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val progress = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        name = cacheManager.getCachedName() ?: ""
+        idealSoilHumidity = cacheManager.getCachedIdealSoilHumidity()
+    }
+
 
     LaunchedEffect(isPressed) {
         while (isPressed) {
@@ -66,11 +83,10 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
                 targetValue = 1f,
                 animationSpec = tween(durationMillis = 1500, easing = LinearEasing)
             )
-            Log.d("MOTOR", "Target position reached - Now watering")
+            Log.d("WATER", "Watering triggered")
         }
         progress.snapTo(0f)
     }
-
 
     Column(
         modifier = Modifier
@@ -103,15 +119,15 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = highlightedText("Old Lady Cactus ") +
-                        AnnotatedString("needs moderate humidity"),
+                text = highlightedText("$name ") +
+                        AnnotatedString("needs ${getHumidityPreference(idealSoilHumidity)} humidity"),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth())
             Text(
                 text =  AnnotatedString("Humidity will be checked every ") +
                         highlightedText("30 minutes ") +
                         AnnotatedString("and maintained at ") +
-                        highlightedText("30%"),
+                        highlightedText("$idealSoilHumidity%"),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(36.dp))
@@ -163,6 +179,12 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
             )
         }
     }
+}
+
+private fun getHumidityPreference(idealSoilHumidity : Int) : String {
+    return if (idealSoilHumidity >= 50) "high"
+    else if (idealSoilHumidity >= 30) "moderate"
+    else "low"
 }
 
 private fun highlightedText(text: String) : AnnotatedString {
