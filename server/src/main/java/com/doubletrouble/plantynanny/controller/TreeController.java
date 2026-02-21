@@ -32,4 +32,17 @@ public class TreeController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/create-tree")
+    public ResponseEntity<String> createTree() {
+        Tree tree = new Tree();
+        tree.setName("Fiddle Leaf Fig");
+        tree.setDescription("A popular indoor tree with large, heavily veined, violin-shaped leaves.");
+        tree.setImageURL("https://example.com/fiddle.jpg");
+        tree.setHumidity_level(60);
+        tree.setLight_hours(6);
+        treeRepository.save(tree);
+
+        return ResponseEntity.ok("Tree created successfully");
+    }
 }

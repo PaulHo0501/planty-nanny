@@ -15,7 +15,8 @@ runtime = "1.10.3"
 uiGraphics = "1.10.3"
 foundationLayout = "1.10.3"
 lottieCompose = "6.7.1"
-runtimeVersion = "1.10.3"
+converterScalars = "3.0.0"
+squareupRetrofitVersion = "3.0.0"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
@@ -42,6 +43,8 @@ androidx-compose-foundation-layout = { group = "androidx.compose.foundation", na
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+retrofit-v300 = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofitVersion" }
+converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterScalars" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

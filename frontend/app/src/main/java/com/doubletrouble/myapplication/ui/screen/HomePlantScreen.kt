@@ -14,29 +14,59 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.R
+import com.doubletrouble.myapplication.data.CacheManager
+import com.doubletrouble.myapplication.data.RetrofitClient
 import com.doubletrouble.myapplication.ui.component.CustomCard
 import com.doubletrouble.myapplication.ui.theme.AshBrown
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
+import java.util.Objects
 
 @Composable
 fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
                     onNavigateToTankWaterLevel: () -> Unit,
                     onNavigateToLightStatus: () -> Unit,
                     onNavigateToHealthCondition: () -> Unit) {
+    val context = LocalContext.current
+    val cacheManager = remember { CacheManager(context) }
+
+    var name by remember { mutableStateOf("") }
+    var funFact by remember {mutableStateOf("")}
+
     val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
     val currentSoilHumidity = 36
     val currentWaterHumidity = 69
     val healthCondition = "Good"
     val lightStatus = "On"
     val lightHours = 8
+
+    LaunchedEffect(Unit) {
+        name = cacheManager.getCachedName() ?: ""
+
+        val localFact = cacheManager.getCachedFact()
+        if (Objects.isNull(localFact)) {
+           try {
+               val fetchedFact = RetrofitClient.apiService.getFact()
+               funFact = fetchedFact
+               cacheManager.setFact(funFact)
+           } catch(e: Exception) {
+               e.printStackTrace()
+           }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -56,7 +86,7 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Your old lady cactus is thriving",
+                text = "Your $name is thriving",
                 style = MaterialTheme.typography.headlineMedium,
                 color = BlackGrey
             )
@@ -67,7 +97,7 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
                 color = AshBrown
             )
             Text(
-                text = "The “hair” on an Old Lady Cactus isn’t soft at all — it’s spines acting like sunscreen.",
+                text = funFact,
                 style = MaterialTheme.typography.bodyMedium,
                 color = BlackGrey
             )
@@ -99,7 +129,6 @@ fun HomePlantScreen(onNavigateToSoilHumidity : () -> Unit,
                 }
             }
         }
-
     }
 }
 
