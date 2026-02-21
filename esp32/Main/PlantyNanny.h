@@ -4,8 +4,9 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 #include <ArduinoJson.h>
-#include "esp32_camera.h"
+#include "esp_camera.h"
 #include "board_config.h"
+#include <mbedtls/base64.h> // Built-in ESP32 hardware encoding
 
 extern void sendStompSend(String destination, String jsonBody);
 
@@ -21,14 +22,14 @@ private:
   // ultrasonic sensor here
   // soil sensor here
 public:
-  void pnSetup();
   void cameraSetup();
+  void pnSetup();
   int processCommand(String incomingCommand);
   int commandWater();
   int commandLight();
   int commandMeasure();
   int commandPicture();
-  unsigned char* captureImage();
+  void captureImage();
 };
 
 #endif
