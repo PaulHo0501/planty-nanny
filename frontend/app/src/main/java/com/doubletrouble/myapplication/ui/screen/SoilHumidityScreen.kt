@@ -95,7 +95,7 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
     }
 }
 
-fun highlightedText(text: String) : AnnotatedString {
+private fun highlightedText(text: String) : AnnotatedString {
     return AnnotatedString(
         text = text,
         spanStyle = SpanStyle(color = HunterGreen,
