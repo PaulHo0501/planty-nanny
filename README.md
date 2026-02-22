@@ -2,9 +2,7 @@
 
 Planty Nanny is an integrated IoT and Computer Vision ecosystem functioned as an autonomous greenhouse climate management. 
 
-It syncronizes physical sensor, a webserver, and an Android controller to maintain optimal growth for the given plant with **near-zero
-
-human interaction**. 
+It syncronizes physical sensor, a webserver, and an Android controller to maintain optimal growth for the given plant with **near-zero human interaction**. 
 
 
 However, Planty Nanny is **NOT** just a static automation system.
