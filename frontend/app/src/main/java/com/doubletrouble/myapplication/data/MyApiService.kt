@@ -16,6 +16,7 @@ interface MyApiService {
 
     @GET("api/tree/analyze-health")
     suspend fun getTreeHealth(
-        @Query("id") cameraId: String = "esp32_cam_1"
+        @Query("id") cameraId: String = "esp32_cam_1",
+        @Query("manual") manual: Boolean = false,
     ): TreeHealth
 }

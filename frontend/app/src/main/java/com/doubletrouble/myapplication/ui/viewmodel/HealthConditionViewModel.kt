@@ -22,12 +22,12 @@ class HealthConditionViewModel(private val apiService: MyApiService) : ViewModel
     private val _uiState = MutableStateFlow<TreeHealthUiState>(TreeHealthUiState.Idle)
     val uiState: StateFlow<TreeHealthUiState> = _uiState.asStateFlow()
 
-    fun fetchTreeHealth() {
+    fun fetchTreeHealth(manual: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = TreeHealthUiState.Loading
 
             try {
-                val result = apiService.getTreeHealth("esp32_cam_1")
+                val result = apiService.getTreeHealth("esp32_cam_1", manual)
                 _uiState.value = TreeHealthUiState.Success(result)
             } catch (e: Exception) {
                 _uiState.value = TreeHealthUiState.Error(e.localizedMessage ?: "Unknown error occurred")
