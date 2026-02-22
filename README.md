@@ -8,14 +8,10 @@ It syncronizes physical sensor, a webserver, and an Android controller to mainta
 However, Planty Nanny is **NOT** just a static automation system.
   
 
-The moment a plant is introduced to the physical base, Planty Nanny will be able to identitfy its species and reconfigures itself into
-
-the perfect home for that lucky plant.
+The moment a plant is introduced to the physical base, Planty Nanny will be able to identitfy its species and reconfigures itself into the perfect home for that lucky plant.
 
 
-Not to mention, Planty Nanny also acts as witty doctor that scans and checks the plant's health daily. If any sign of sickness shows,
-
-it will send a diagnosis straight to your phon, ensuring your plant stays healthy and thriving.
+Not to mention, Planty Nanny also acts as witty doctor that scans and checks the plant's health daily. If any sign of sickness shows, it will send a diagnosis straight to your phon, ensuring your plant stays healthy and thriving.
 
 
 ## Gallery
