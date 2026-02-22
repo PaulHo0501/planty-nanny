@@ -1,5 +1,6 @@
 package com.doubletrouble.myapplication.data
 
+import com.doubletrouble.myapplication.data.model.Humidity
 import com.doubletrouble.myapplication.data.model.Tree
 import com.doubletrouble.myapplication.data.model.TreeHealth
 import retrofit2.http.GET
@@ -26,6 +27,9 @@ interface MyApiService {
 
     @GET("api/tree/light-status")
     suspend fun getTodayLightStatus() : String
+
+    @GET("api/tree/humidity/history")
+    suspend fun getHumidityHistory(): List<Humidity>
 
     @POST("api/tree/light-status")
     suspend fun postLightStatus(

@@ -47,6 +47,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.ui.component.Chart
@@ -56,16 +58,17 @@ import com.doubletrouble.myapplication.ui.theme.HunterGreen
 import com.doubletrouble.myapplication.ui.theme.MutedOlive
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
+import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
 
 @Composable
-fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
+fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: () -> Unit) {
     val context = LocalContext.current
     val cacheManager = remember { CacheManager(context) }
 
     var name by remember { mutableStateOf("") }
     var idealSoilHumidity by remember { mutableIntStateOf(0) }
 
-    val dataPoints = listOf(10, 20, 30, 40, 50, 90, 12, 38)
+    val dataPoints by viewModel.humidityHistory.collectAsStateWithLifecycle()
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -74,8 +77,8 @@ fun SoilHumidityScreen(onNavigateToHomePlant: () -> Unit) {
     LaunchedEffect(Unit) {
         name = cacheManager.getCachedName() ?: ""
         idealSoilHumidity = cacheManager.getCachedIdealSoilHumidity()
+        viewModel.getHumidityHistory()
     }
-
 
     LaunchedEffect(isPressed) {
         while (isPressed) {
@@ -193,12 +196,4 @@ private fun highlightedText(text: String) : AnnotatedString {
         spanStyle = SpanStyle(color = HunterGreen,
             fontWeight = FontWeight.Bold)
     )
-}
-
-@Preview(showBackground = true, name = "Soil Humidity Screen Preview")
-@Composable
-fun SoilHumidityPreview() {
-    PlantyNannyTheme {
-        SoilHumidityScreen {}
-    }
 }
