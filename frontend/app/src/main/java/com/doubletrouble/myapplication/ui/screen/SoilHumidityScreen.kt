@@ -57,7 +57,6 @@ import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -83,10 +82,7 @@ fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: 
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            // 1. Start the visual border animation (fills over 3 seconds)
-            launch {
-                progress.animateTo(1f, animationSpec = tween(durationMillis = 3000))
-            }
+            progress.animateTo(1f, animationSpec = tween(durationMillis = 3000))
 
             // 2. Start the continuous watering loop
             while (isActive) { // This loop automatically dies when the user lets go
