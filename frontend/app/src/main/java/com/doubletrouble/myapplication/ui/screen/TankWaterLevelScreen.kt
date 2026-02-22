@@ -27,7 +27,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,19 +44,23 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.MutedOlive
-import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.ScarletRush
 import com.doubletrouble.myapplication.ui.theme.TeaGreen
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import com.doubletrouble.myapplication.ui.theme.VibrantCoral
+import com.doubletrouble.myapplication.ui.viewmodel.TankWaterLevelViewModel
+import com.doubletrouble.myapplication.ui.viewmodel.WaterLevelUiState
 
 @Composable
-fun TankWaterLevelScreen(onNavigateToHomePlant: () -> Unit) {
+fun TankWaterLevelScreen(viewModel: TankWaterLevelViewModel, onNavigateToHomePlant: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+    val realtimeWaterLevel by viewModel.realtimeWaterLevel.collectAsStateWithLifecycle()
+
     val infiniteTransition = rememberInfiniteTransition()
     val waveOffsetFront by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -68,8 +77,25 @@ fun TankWaterLevelScreen(onNavigateToHomePlant: () -> Unit) {
         )
     )
     val bottlePainter = painterResource(id = R.drawable.water_bottle)
-    val originalFillPercentage = 12
-    val fillPercentage = originalFillPercentage / 100f
+    var originalFillPercentage by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getWaterLevel()
+    }
+
+    LaunchedEffect(uiState) {
+        originalFillPercentage = if (uiState is WaterLevelUiState.Success) {
+            (uiState as WaterLevelUiState.Success).waterLevel
+        } else {
+            0
+        }
+    }
+
+    LaunchedEffect(realtimeWaterLevel) {
+        realtimeWaterLevel?.let { incomingWaterLevel: Int ->
+            originalFillPercentage = incomingWaterLevel
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -118,7 +144,7 @@ fun TankWaterLevelScreen(onNavigateToHomePlant: () -> Unit) {
                         draw(size = size)
                     }
 
-                    val fillLevel = size.height * (1f - fillPercentage)
+                    val fillLevel = size.height * (1f - (originalFillPercentage / 100f))
                     val waveHeightFront = 32.dp.toPx()
                     val waveHeightBack = 24.dp.toPx()
 
@@ -205,13 +231,5 @@ fun chooseColor(fillPercentage : Int) : List<Color> {
         listOf(TeaGreen, MutedOlive)
     } else {
         listOf(VibrantCoral, ScarletRush)
-    }
-}
-
-@Preview(showBackground = true, name = "Tank Water Level Screen Preview")
-@Composable
-fun TankWaterLevelScreenPreview() {
-    PlantyNannyTheme {
-        TankWaterLevelScreen {}
     }
 }

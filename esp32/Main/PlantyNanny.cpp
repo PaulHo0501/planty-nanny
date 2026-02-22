@@ -71,6 +71,7 @@ void PlantyNanny::pnSetup() {
     Serial.print("seesaw started! version: ");
     Serial.println(ss.getVersion(), HEX);
   }
+  setupUltrasonic();
   Serial.println("[PN] Done Setup");
 }
 
@@ -121,7 +122,7 @@ int PlantyNanny::processCommand(String incomingCommand) {
     if (strcmp(doc["type"], "humidity") == 0)
       return commandMeasure();
     else if (strcmp(doc["type"], "water") == 0)
-      return getHumidityPercentage();
+      return getWaterLevelPercentage();
   }
   return 0;
 }
@@ -209,6 +210,7 @@ int PlantyNanny::commandPicture() {
 void PlantyNanny::setupUltrasonic() {
   pinMode(triggerPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  Serial.println("[PN] Finished set up ultrasonic");
 }
 
 int PlantyNanny::getWaterLevelPercentage() {

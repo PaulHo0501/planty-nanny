@@ -46,7 +46,6 @@ class LightStatusViewModel(private val apiService: MyApiService): ViewModel() {
             try {
                 val result = apiService.getTodayLightStatus()
                 _uiStateGetLightStatus.value = LightStatusUiState.SuccessGetLightStatus(result)
-                println("Fuck Me" + result)
             } catch (e: Exception) {
                 _uiStateGetLightStatus.value = LightStatusUiState.Error(e.localizedMessage ?: "Unknown error occurred")
             }

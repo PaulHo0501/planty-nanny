@@ -35,7 +35,7 @@ private:
   const int tank_full_cm = 2;
 
   // water pump
-
+  int pumpPin = 4;
 
   const unsigned long interval = 5000; // Doing something for 5 seconds
   const char* uploadLink = "http://192.168.1.89:8080/api/camera/upload";

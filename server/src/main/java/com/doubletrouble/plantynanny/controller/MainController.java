@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 import java.util.Objects;
@@ -160,6 +161,23 @@ public class MainController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/water-level")
+    public ResponseEntity<Integer> getWaterLevel() {
+        try {
+            WaterLevel latestRecord = waterLevelRepository.findTopByOrderByCreatedAtDesc();
+            if (latestRecord != null) {
+                return ResponseEntity.ok(latestRecord.getPercentage());
+            } else {
+                return ResponseEntity.ok(0);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error fetching light status: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
     @PostMapping("/light-status")
     public ResponseEntity<String> updateLightStatus(@RequestParam("id") String id, @RequestParam("light-status") LightState lightStatus) {
