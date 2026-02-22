@@ -29,7 +29,7 @@ public class HumidityService {
 
     @Scheduled(fixedRate = 300000)
     public void triggerEsp32MeasurementWaterLevel() {
-        String waterCommand = "{\"command\":\"MEASURE_WATER\", \"id\":\"esp32_cam_1\", \"type\":\"water\"}";
+        String waterCommand = "{\"command\":\"MEASURE\", \"id\":\"esp32_cam_1\", \"type\":\"water\"}";
         messagingTemplate.convertAndSend("/topic/commands", waterCommand);
         System.out.println("Sent MEASURE Water Level command to ESP32.");
     }
