@@ -59,10 +59,15 @@ public class MainController {
             newTree.setDescription(analysisData.description());
             newTree.setHumidity_level(analysisData.humidityLevel());
             newTree.setLight_hours(analysisData.lightHours());
-
             newTree.setImageURL(s3Url);
-
             Tree savedTree = treeRepository.save(newTree);
+
+            TreeHealthDto analysisHealthData = geminiService.analyzePlantHealth(s3Url);
+            TreeHealth health = new TreeHealth();
+            health.setImageUrl(s3Url);
+            health.setHealthCondition(analysisHealthData.healthCondition());
+            health.setDescription(analysisHealthData.description());
+            treeHealthRepository.save(health);
 
             return ResponseEntity.ok(savedTree);
 
