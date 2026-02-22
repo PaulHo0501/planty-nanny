@@ -32,8 +32,8 @@ it will send a diagnosis straight to your phon, ensuring your plant stays health
 <img width="300" height="808" alt="Main Screen - Light Status - Light On" src="https://github.com/user-attachments/assets/9298ea3e-22a7-4651-a430-82c22f16239c" />
 <img width="300" height="808" alt="Main Screen - Light Status - Light Off" src="https://github.com/user-attachments/assets/2d2a81c8-52c4-412a-8a57-875071f8ea84" />
 <img width="300" height="808" alt="Main Screen - Health Condition Level" src="https://github.com/user-attachments/assets/0dc0bffe-ad4f-44db-ace1-3a85f7ded1b2" />
-<img width="450" height="808" alt="Picture 2" src="https://github.com/user-attachments/assets/8eee27a2-a6f3-416d-878f-37821a5a95a5" />
-<img width="450" height="808" alt="Picture 2" src="https://github.com/user-attachments/assets/4e1b8929-5026-4103-b78f-90115c117787" />
+<img width="430" height="808" alt="Picture 2" src="https://github.com/user-attachments/assets/8eee27a2-a6f3-416d-878f-37821a5a95a5" />
+<img width="430" height="808" alt="Picture 2" src="https://github.com/user-attachments/assets/4e1b8929-5026-4103-b78f-90115c117787" />
 <img width="900" height="808" alt="Picture 3" src="https://github.com/user-attachments/assets/d04309ea-b850-474f-92cc-201f86260b49" />
 
 ## Technical Info
