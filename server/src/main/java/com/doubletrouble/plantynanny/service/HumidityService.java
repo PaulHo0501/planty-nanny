@@ -16,14 +16,21 @@ public class HumidityService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     public void triggerEsp32Measurement() {
         if (treeRepository.count() == 0) {
             System.out.println("No plants registered. Skipping MEASUREMENT.");
             return;
         }
-        String commandJson = "{\"command\":\"MEASURE\", \"id\":\"esp32_cam_1\"}";
+        String commandJson = "{\"command\":\"MEASURE\", \"id\":\"esp32_cam_1\", \"type\":\"humidity\"}";
         messagingTemplate.convertAndSend("/topic/commands", commandJson);
         System.out.println("Sent MEASURE command to ESP32.");
+    }
+
+    @Scheduled(fixedRate = 300000)
+    public void triggerEsp32MeasurementWaterLevel() {
+        String waterCommand = "{\"command\":\"MEASURE_WATER\", \"id\":\"esp32_cam_1\", \"type\":\"water\"}";
+        messagingTemplate.convertAndSend("/topic/commands", waterCommand);
+        System.out.println("Sent MEASURE Water Level command to ESP32.");
     }
 }

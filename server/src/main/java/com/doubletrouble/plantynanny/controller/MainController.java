@@ -3,15 +3,10 @@ package com.doubletrouble.plantynanny.controller;
 import com.doubletrouble.plantynanny.dto.HumidityDto;
 import com.doubletrouble.plantynanny.dto.TreeDto;
 import com.doubletrouble.plantynanny.dto.TreeHealthDto;
-import com.doubletrouble.plantynanny.entity.Humidity;
-import com.doubletrouble.plantynanny.entity.LightStatus;
-import com.doubletrouble.plantynanny.entity.Tree;
-import com.doubletrouble.plantynanny.entity.TreeHealth;
+import com.doubletrouble.plantynanny.dto.WaterLevelDto;
+import com.doubletrouble.plantynanny.entity.*;
 import com.doubletrouble.plantynanny.enums.LightState;
-import com.doubletrouble.plantynanny.repositorty.HumidityRepository;
-import com.doubletrouble.plantynanny.repositorty.LightStatusRepository;
-import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
-import com.doubletrouble.plantynanny.repositorty.TreeRepository;
+import com.doubletrouble.plantynanny.repositorty.*;
 import com.doubletrouble.plantynanny.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +35,9 @@ public class MainController {
 
     @Autowired
     private HumidityRepository humidityRepository;
+
+    @Autowired
+    private WaterLevelRepository waterLevelRepository;
 
     private final GeminiService geminiService;
 
@@ -189,4 +187,12 @@ public class MainController {
         return humidityRepository.findTop8ByOrderByCreatedAtDesc();
     }
 
+    @MessageMapping("/water-level")
+    public void receiveWaterLevelData(WaterLevelDto payload) {
+        WaterLevel newRecord = new WaterLevel();
+        newRecord.setPercentage(payload.waterLevel());
+        waterLevelRepository.save(newRecord);
+        System.out.println("Received & Saved Tank Water Level: " + payload.waterLevel() + "%");
+        messagingTemplate.convertAndSend("/topic/water-level", payload);
+    }
 }

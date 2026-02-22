@@ -118,7 +118,10 @@ int PlantyNanny::processCommand(String incomingCommand) {
     return commandPicture();
   }
   else if (strcmp(doc["command"], "MEASURE") == 0) {
-    return commandMeasure();
+    if (strcmp(doc["type"], "humidity") == 0)
+      return commandMeasure();
+    else if (strcmp(doc["type"], "water") == 0)
+      return getHumidityPercentage();
   }
   return 0;
 }
@@ -201,4 +204,42 @@ int PlantyNanny::commandPicture() {
   Serial.println("Capturing image...");
   captureImage();
   return 0;
+}
+
+void PlantyNanny::setupUltrasonic() {
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+int PlantyNanny::getWaterLevelPercentage() {
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+
+  if (duration == 0) {
+    Serial.println("Ultrasonic timeout! Sensor disconnected or tank is too deep.");
+    return -1; // Error state
+  }
+
+  int distanceCm = duration * 0.0343 / 2;
+
+  int percentage = map(distanceCm, TANK_EMPTY_CM, TANK_FULL_CM, 0, 100);
+
+  percentage = constrain(percentage, 0, 100);
+
+  Serial.printf("Water Distance: %d cm | Tank Level: %d%%\n", distanceCm, percentage);
+
+  if (percentage >= 0) {
+    // Build the JSON payload: {"waterLevel": 85}
+    String jsonPayload = "{\"waterLevel\": " + String(waterLevel) + "}";
+    
+    // Send it to your Spring Boot topic
+    stompClient.sendMessage("/app/water-level", jsonPayload);
+  }
+
+  return percentage;
 }

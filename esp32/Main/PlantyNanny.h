@@ -28,13 +28,23 @@ private:
   const int maximumCap = 800;
   Adafruit_seesaw ss;
 
+  // ultrasonic sensor
+  int triggerPin = 2;
+  int echoPin = 3;
+  const int tank_empty_cm = 17;
+  const int tank_full_cm = 2;
+
+  // water pump
+
 
   const unsigned long interval = 5000; // Doing something for 5 seconds
   const char* uploadLink = "http://192.168.1.89:8080/api/camera/upload";
   const char* getCurrentLightStatusLink = "http://192.168.1.89:8080/api/tree/light-status";
-  // ultrasonic sensor here
+
 public:
   PlantyNanny();
+  void setupUltrasonic();
+  int getWaterLevelPercentage();
   void cameraSetup();
   void pnSetup();
   int processCommand(String incomingCommand);
