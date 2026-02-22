@@ -45,20 +45,20 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.data.CacheManager
+import com.doubletrouble.myapplication.data.model.Humidity
 import com.doubletrouble.myapplication.ui.component.Chart
 import com.doubletrouble.myapplication.ui.component.Button
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.HunterGreen
 import com.doubletrouble.myapplication.ui.theme.MutedOlive
-import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: () -> Unit) {
@@ -134,9 +134,9 @@ fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: 
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(36.dp))
-            Chart(dataPoints = dataPoints,
+            Chart(dataPoints = dataPoints.map { it?.percentage ?: 0 },
                 showAxis = true,
-                labels = listOf("7 AM", "8 AM", "9 AM"),
+                labels = formatChartLabels(dataPoints.map { it!! }).filter { !it.isEmpty() },
                 height = 360.dp,
                 spacedBy = 16.dp)
             Spacer(modifier = Modifier.height(16.dp))
@@ -180,6 +180,28 @@ fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: 
                     }
                 }
             )
+        }
+    }
+}
+
+private fun formatChartLabels(humidityRecords: List<Humidity>): List<String> {
+    val timeRecords = humidityRecords.sortedBy { it.createdAt }.map {it.createdAt}
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+    val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return timeRecords.mapIndexed { index, time ->
+        if (index == 1 || index == 3 || index == 5) {
+            try {
+                val parsedDate = inputFormat.parse(time)
+                if (parsedDate != null) {
+                    outputFormat.format(parsedDate)
+                } else {
+                    ""
+                }
+            } catch (_: Exception) {
+                ""
+            }
+        } else {
+            ""
         }
     }
 }
