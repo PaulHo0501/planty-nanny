@@ -51,6 +51,7 @@ fun HomePlantScreen(
     val cacheManager = remember { CacheManager(context) }
 
     var name by remember { mutableStateOf("") }
+    var isFactLoading by remember { mutableStateOf(false) }
     var funFact by remember { mutableStateOf("") }
 
     val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
@@ -60,15 +61,20 @@ fun HomePlantScreen(
 
         val localFact = cacheManager.getCachedFact()
         if (localFact.isNullOrEmpty()) {
+            isFactLoading = true
             try {
                 val fetchedFact = RetrofitClient.apiService.getFact()
                 funFact = fetchedFact
                 cacheManager.setFact(fetchedFact)
             } catch (e: Exception) {
                 e.printStackTrace()
+                funFact = "Plant love to stay offline sometimes."
+            } finally {
+                isFactLoading = false
             }
         } else {
             funFact = localFact
+            isFactLoading = false
         }
 
         if (uiState.isLoading && !uiState.isRefreshing) {
@@ -119,11 +125,16 @@ fun HomePlantScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         color = AshBrown
                     )
-                    Text(
-                        text = funFact,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = BlackGrey
-                    )
+                    if (isFactLoading) {
+                        ProgressIndicator()
+                    }
+                    else {
+                        Text(
+                            text = funFact,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = BlackGrey
+                        )
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
