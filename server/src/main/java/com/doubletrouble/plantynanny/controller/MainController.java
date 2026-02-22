@@ -1,7 +1,10 @@
 package com.doubletrouble.plantynanny.controller;
 
 import com.doubletrouble.plantynanny.dto.TreeDto;
+import com.doubletrouble.plantynanny.dto.TreeHealthDto;
 import com.doubletrouble.plantynanny.entity.Tree;
+import com.doubletrouble.plantynanny.entity.TreeHealth;
+import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
 import com.doubletrouble.plantynanny.service.GeminiService;
 import com.doubletrouble.plantynanny.service.ImageBridgeService;
@@ -20,15 +23,18 @@ import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping("/api/tree")
-public class TreeController {
+public class MainController {
     @Autowired
     private TreeRepository treeRepository;
+
+    @Autowired
+    private TreeHealthRepository treeHealthRepository;
 
     private final GeminiService geminiService;
 
     private final ImageBridgeService imageBridgeService;
 
-    public TreeController(GeminiService geminiService, ImageBridgeService imageBridgeService) {
+    public MainController(GeminiService geminiService, ImageBridgeService imageBridgeService) {
         this.geminiService = geminiService;
         this.imageBridgeService = imageBridgeService;
     }
@@ -74,6 +80,33 @@ public class TreeController {
             return ResponseEntity.ok(generatedFact);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/analyze-health")
+    public ResponseEntity<TreeHealth> analyzeHealth(@RequestParam("id") String id) {
+        try {
+            CompletableFuture<String> futureS3Url = imageBridgeService.triggerCaptureAndWait(id);
+
+            String s3Url = futureS3Url.get(15, TimeUnit.SECONDS);
+
+            TreeHealthDto analysisData = geminiService.analyzePlantHealth(s3Url);
+
+            TreeHealth health =  new TreeHealth();
+            health.setImageUrl(s3Url);
+            health.setCondition(analysisData.condition());
+            health.setDescription(analysisData.description());
+
+            TreeHealth savedHealthCondition = treeHealthRepository.save(health);
+
+            return ResponseEntity.ok(savedHealthCondition);
+
+        } catch (TimeoutException e) {
+            System.err.println("ESP32 took too long to capture and upload!");
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
+        } catch (Exception e) {
+            System.err.println("Error processing tree request: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

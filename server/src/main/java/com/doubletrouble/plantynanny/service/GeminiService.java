@@ -1,6 +1,7 @@
 package com.doubletrouble.plantynanny.service;
 
 import com.doubletrouble.plantynanny.dto.TreeDto;
+import com.doubletrouble.plantynanny.dto.TreeHealthDto;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,27 @@ public class GeminiService {
                 .call()
                 .entity(TreeDto.class);
 
+    }
+
+    public TreeHealthDto analyzePlantHealth(String s3ImageUrl) {
+        String promptText = """ 
+                Analyze this the current health of this plant in the image.
+                State if the plant is in good health (true for good, false for bad).
+                Explain the statement by giving a short analytic about its appearance based on the image.
+                """;
+
+        return chatClient.prompt()
+                .user(userSpec -> {
+                            try {
+                                userSpec
+                                        .text(promptText)
+                                        .media(MimeTypeUtils.IMAGE_JPEG, new UrlResource(s3ImageUrl));
+                            } catch (MalformedURLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                )
+                .call()
+                .entity(TreeHealthDto.class);
     }
 }
