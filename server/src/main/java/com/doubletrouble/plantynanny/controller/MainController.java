@@ -8,6 +8,7 @@ import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
 import com.doubletrouble.plantynanny.service.GeminiService;
 import com.doubletrouble.plantynanny.service.ImageBridgeService;
+import com.doubletrouble.plantynanny.service.TreeHealthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,13 @@ public class MainController {
 
     private final ImageBridgeService imageBridgeService;
 
-    public MainController(GeminiService geminiService, ImageBridgeService imageBridgeService) {
+    private final TreeHealthService treeHealthService;
+
+    public MainController(GeminiService geminiService, ImageBridgeService imageBridgeService, TreeHealthService treeHealthService) {
         this.geminiService = geminiService;
         this.imageBridgeService = imageBridgeService;
+        this.treeHealthService = treeHealthService;
+
     }
 
 
@@ -83,22 +88,15 @@ public class MainController {
     }
 
     @GetMapping("/analyze-health")
-    public ResponseEntity<TreeHealth> analyzeHealth(@RequestParam("id") String id) {
+    public ResponseEntity<TreeHealth> analyzeHealth(@RequestParam("id") String id, @RequestParam(value = "manual", defaultValue = "false") boolean manual) {
         try {
-            CompletableFuture<String> futureS3Url = imageBridgeService.triggerCaptureAndWait(id);
-
-            String s3Url = futureS3Url.get(15, TimeUnit.SECONDS);
-
-            TreeHealthDto analysisData = geminiService.analyzePlantHealth(s3Url);
-
-            TreeHealth health =  new TreeHealth();
-            health.setImageUrl(s3Url);
-            health.setHealthCondition(analysisData.healthCondition());
-            health.setDescription(analysisData.description());
-
-            TreeHealth savedHealthCondition = treeHealthRepository.save(health);
-
-            return ResponseEntity.ok(savedHealthCondition);
+            if (manual) {
+                TreeHealth savedHealthCondition = treeHealthService.executeHealthAnalysis(id);
+                return ResponseEntity.ok(savedHealthCondition);
+            } else {
+                TreeHealth latestHealth = treeHealthService.getLatestHealthRecord();
+                return ResponseEntity.ok(latestHealth);
+            }
 
         } catch (TimeoutException e) {
             System.err.println("ESP32 took too long to capture and upload!");

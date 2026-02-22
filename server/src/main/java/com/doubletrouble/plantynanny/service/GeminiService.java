@@ -49,8 +49,8 @@ public class GeminiService {
     public TreeHealthDto analyzePlantHealth(String s3ImageUrl) {
         String promptText = """ 
                 Analyze this the current health of this plant in the image.
-                State if the plant is in good health (true for good, false for bad).
-                Explain the statement by giving a short analytic about its appearance based on the image.
+                State if the plant is in good or bad health condition.
+                Explain the statement by giving a short analytic (maximum two sentences) about its appearance based on the image.
                 """;
 
         return chatClient.prompt()
