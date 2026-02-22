@@ -125,6 +125,7 @@ fun HealthConditionScreen(viewModel : HealthConditionViewModel,
                     )
                     Text(
                         text = treeHealth!!.description,
+                        color = HunterGreen,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()
                     )
