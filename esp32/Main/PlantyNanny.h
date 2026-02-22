@@ -31,7 +31,7 @@ private:
   // ultrasonic sensor
   int triggerPin = 2;
   int echoPin = 3;
-  const int tank_empty_cm = 17;
+  const int tank_empty_cm = 8;
   const int tank_full_cm = 2;
 
   // water pump
