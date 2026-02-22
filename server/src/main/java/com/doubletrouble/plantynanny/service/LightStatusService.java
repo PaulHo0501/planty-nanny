@@ -39,8 +39,7 @@ public class LightStatusService {
         return newLightStatus.getLightStatus().name();
     }
 
-    // @Scheduled(cron = "0 0 7 * * ?")
-    @Scheduled(cron = "0 * * * * ?")
+     @Scheduled(cron = "0 0 7 * * ?")
     public void scheduleLightOn() {
         if (treeRepository.count() == 0) {
             System.out.println("No plants registered. Skipping 7 AM Light ON.");
@@ -59,8 +58,7 @@ public class LightStatusService {
                 System.err.println("Failed to turn on morning light: " + e.getMessage());
             }
 
-//            Instant turnOffTime = Instant.now().plus(idealLightHours, ChronoUnit.HOURS);
-            Instant turnOffTime = Instant.now().plus(idealLightHours, ChronoUnit.SECONDS);
+            Instant turnOffTime = Instant.now().plus(idealLightHours, ChronoUnit.HOURS);
             System.out.println("Light scheduled to turn OFF dynamically at: " + turnOffTime);
 
             taskScheduler.schedule(() -> {
