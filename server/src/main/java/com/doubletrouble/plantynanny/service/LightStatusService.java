@@ -5,6 +5,7 @@ import com.doubletrouble.plantynanny.entity.Tree;
 import com.doubletrouble.plantynanny.enums.LightState;
 import com.doubletrouble.plantynanny.repositorty.LightStatusRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class LightStatusService {
         return newLightStatus.getLightStatus().name();
     }
 
-     @Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(cron = "0 0 7 * * ?")
     public void scheduleLightOn() {
         if (treeRepository.count() == 0) {
             System.out.println("No plants registered. Skipping 7 AM Light ON.");
