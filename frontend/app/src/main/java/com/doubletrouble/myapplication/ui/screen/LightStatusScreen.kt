@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +38,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.data.CacheManager
@@ -45,11 +45,14 @@ import com.doubletrouble.myapplication.ui.component.LottieDisplay
 import com.doubletrouble.myapplication.ui.theme.AshBrown
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.HunterGreen
-import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
+import com.doubletrouble.myapplication.ui.viewmodel.LightStatusUiState
+import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
 
 @Composable
-fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
+fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+
     val context = LocalContext.current
     val cacheManager = remember { CacheManager(context) }
 
@@ -57,11 +60,19 @@ fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
     var idealLightHours by remember { mutableIntStateOf(0) }
 
     val hoursOn = 2
-    var lightStatus by remember { mutableStateOf("ON") }
+    var lightStatus by remember { mutableStateOf("OFF") }
 
     LaunchedEffect(Unit) {
         name = cacheManager.getCachedName() ?: ""
         idealLightHours = cacheManager.getCachedIdealLightHours()
+    }
+
+    LaunchedEffect(uiState) {
+        lightStatus = if (uiState is LightStatusUiState.Success) {
+            (uiState as LightStatusUiState.Success).lightStatus
+        } else {
+            "OFF"
+        }
     }
 
     Column(
@@ -120,7 +131,11 @@ fun LightStatusScreen(onNavigateToHomePlant: () -> Unit) {
                     LottieDisplay(
                         resId = if (targetStatus == "ON") R.raw.sunny else R.raw.moon,
                         size = 480.dp,
-                        onClick = { lightStatus = if (targetStatus == "ON") "OFF" else "ON" })
+                        onClick = {
+                            val nextLightStatus = if (targetStatus == "ON") "OFF" else "ON"
+                            lightStatus = nextLightStatus
+                            viewModel.postLightStatus(nextLightStatus)
+                        })
                 }
 
                 if (lightStatus == "ON") {
@@ -162,12 +177,4 @@ private fun highlightedText(text: String, color : Color) : AnnotatedString {
         spanStyle = SpanStyle(color = color,
             fontWeight = FontWeight.Bold)
     )
-}
-
-@Preview(showBackground = true, name = "Light Status Screen Preview")
-@Composable
-fun LightStatusScreenPreview() {
-    PlantyNannyTheme {
-        LightStatusScreen { }
-    }
 }

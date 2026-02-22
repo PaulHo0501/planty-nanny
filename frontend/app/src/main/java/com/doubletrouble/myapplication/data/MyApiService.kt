@@ -3,6 +3,7 @@ package com.doubletrouble.myapplication.data
 import com.doubletrouble.myapplication.data.model.Tree
 import com.doubletrouble.myapplication.data.model.TreeHealth
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface MyApiService {
@@ -18,4 +19,10 @@ interface MyApiService {
     suspend fun getTreeHealth(
         @Query("id") cameraId: String = "esp32_cam_1"
     ): TreeHealth
+
+    @POST("api/tree/light-status")
+    suspend fun postLightStatus(
+        @Query("id") cameraId: String = "esp32_cam_1",
+        @Query("light-status") lightStatus : String = "ON"
+    ) :  String
 }

@@ -26,6 +26,7 @@ import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.viewmodel.AddPlantViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.HealthConditionViewModel
+import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,7 +105,16 @@ fun PlantyApp() {
         }
 
         composable("light_status") {
-            LightStatusScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
+            val lightStatusViewModel: LightStatusViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return LightStatusViewModel(RetrofitClient.apiService) as T
+                    }
+                }
+            )
+            LightStatusScreen(viewModel = lightStatusViewModel,
+                onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
     }
 }
