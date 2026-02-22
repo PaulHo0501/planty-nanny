@@ -54,7 +54,7 @@ fun CustomCard(title: String,
                 )
             }
             if (!dataList.isNullOrEmpty()) {
-                Chart(dataList)
+                Chart(dataList, height = 60.dp)
             }
             if (!label.isNullOrEmpty()) {
                 Text(

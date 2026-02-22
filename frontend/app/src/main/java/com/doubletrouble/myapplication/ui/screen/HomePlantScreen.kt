@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,8 +52,6 @@ fun HomePlantScreen(
     var isFactLoading by remember { mutableStateOf(false) }
     var funFact by remember { mutableStateOf("") }
 
-    val soilHumidity = listOf(80, 75, 40, 30, 90, 85)
-
     LaunchedEffect(Unit) {
         name = cacheManager.getCachedName() ?: ""
 
@@ -82,98 +78,91 @@ fun HomePlantScreen(
         }
     }
 
-    PullToRefreshBox(
-        isRefreshing = uiState.isRefreshing,
-        onRefresh = { viewModel.fetchDashboardData(isRefresh = true) },
-        modifier = Modifier.fillMaxSize()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = VanillaCream)
     ) {
-
-        Box(
+        Image(
+            painter = painterResource(R.drawable.home_background_plant),
+            contentDescription = "Home background",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = VanillaCream)
+                .background(VanillaCream)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 50.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Image(
-                painter = painterResource(R.drawable.home_background_plant),
-                contentDescription = "Home background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(VanillaCream)
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 50.dp, horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
 
 
-                if (uiState.isLoading) {
-                    ProgressIndicator() // Or your custom loading animation
-                } else if (uiState.errorMessage != null) {
-                    Text(text = uiState.errorMessage!!, color = ScarletRush)
+            if (uiState.isLoading) {
+                ProgressIndicator() // Or your custom loading animation
+            } else if (uiState.errorMessage != null) {
+                Text(text = uiState.errorMessage!!, color = ScarletRush)
+            } else {
+                Text(
+                    text = "Your $name is ${if (uiState.healthCondition == "GOOD") "thriving" else "surviving"}",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = BlackGrey
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Did you know?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = AshBrown
+                )
+                if (isFactLoading) {
+                    ProgressIndicator()
                 } else {
                     Text(
-                        text = "Your $name is ${if (uiState.healthCondition == "GOOD") "thriving" else "surviving"}",
-                        style = MaterialTheme.typography.headlineMedium,
+                        text = funFact,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = BlackGrey
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Did you know?",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = AshBrown
-                    )
-                    if (isFactLoading) {
-                        ProgressIndicator()
-                    }
-                    else {
-                        Text(
-                            text = funFact,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = BlackGrey
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        CustomCard(
+                            title = "Soil Humidity",
+                            currentPercentage = uiState.soilHumidity,
+                            dataList = uiState.humidityHistory.map { it.percentage },
+                            onClick = onNavigateToSoilHumidity
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        item {
-                            CustomCard(
-                                title = "Soil Humidity",
-                                currentPercentage = uiState.soilHumidity,
-                                dataList = soilHumidity,
-                                onClick = onNavigateToSoilHumidity
-                            )
-                        }
-                        item {
-                            CustomCard(
-                                title = "Tank Water Level",
-                                currentPercentage = uiState.tankWaterLevel,
-                                onClick = onNavigateToTankWaterLevel
-                            )
-                        }
-                        item {
-                            CustomCard(
-                                title = "Health Condition",
-                                status = uiState.healthCondition.replaceFirstChar { it.uppercase() },
-                                onClick = onNavigateToHealthCondition
-                            )
-                        }
-                        item {
-                            CustomCard(
-                                title = "Light",
-                                status = uiState.lightStatus.uppercase(),
-                                label = "For ${uiState.lightHours} hours",
-                                onClick = onNavigateToLightStatus
-                            )
-                        }
+                    item {
+                        CustomCard(
+                            title = "Tank Water Level",
+                            currentPercentage = uiState.tankWaterLevel,
+                            onClick = onNavigateToTankWaterLevel
+                        )
+                    }
+                    item {
+                        CustomCard(
+                            title = "Health Condition",
+                            status = uiState.healthCondition.lowercase().replaceFirstChar { it.uppercase() },
+                            onClick = onNavigateToHealthCondition
+                        )
+                    }
+                    item {
+                        CustomCard(
+                            title = "Light",
+                            status = uiState.lightStatus.uppercase(),
+                            label = "For ${uiState.lightHours} hours",
+                            onClick = onNavigateToLightStatus
+                        )
                     }
                 }
             }
         }
     }
+
 }

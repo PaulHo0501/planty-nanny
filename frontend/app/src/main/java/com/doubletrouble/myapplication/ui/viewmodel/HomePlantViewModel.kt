@@ -3,6 +3,7 @@ package com.doubletrouble.myapplication.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doubletrouble.myapplication.data.MyApiService
+import com.doubletrouble.myapplication.data.model.Humidity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 data class HomeUiState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
+    val humidityHistory: List<Humidity> = emptyList(),
     val soilHumidity: Int = 0,
     val tankWaterLevel: Int = 0,
     val healthCondition: String = "Unknown",
@@ -36,6 +38,7 @@ class HomePlantViewModel(private val apiService: MyApiService) : ViewModel() {
             try {
                 // 2. Fire all API requests AT THE SAME TIME
                 val humidityDeferred = async { apiService.getHumidity() }
+                val humidityListDeferred = async {apiService.getHumidityHistory()}
                 val waterDeferred = async { apiService.getWaterLevel() }
                 val healthDeferred = async { apiService.getTreeHealth() }
                 val lightStatusDeferred = async { apiService.getTodayLightStatus() }
@@ -48,6 +51,7 @@ class HomePlantViewModel(private val apiService: MyApiService) : ViewModel() {
                     currentState.copy(
                         isLoading = false,
                         soilHumidity = humidityDeferred.await(),
+                        humidityHistory = humidityListDeferred.await(),
                         tankWaterLevel = waterDeferred.await(),
                         healthCondition = healthDeferred.await().healthCondition,
                         lightStatus = lightStatusDeferred.await(),
