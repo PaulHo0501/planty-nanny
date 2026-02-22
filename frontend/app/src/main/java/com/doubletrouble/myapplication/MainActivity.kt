@@ -10,9 +10,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.data.RetrofitClient
 import com.doubletrouble.myapplication.ui.screen.AddPlantScreen
@@ -87,11 +89,13 @@ fun PlantyApp() {
                     }
                 }
             )
-            HomePlantScreen(onNavigateToSoilHumidity = {navController.navigate(route = "soil_humidity")},
+            HomePlantScreen(
+                navController = navController,
+                onNavigateToSoilHumidity = {navController.navigate(route = "soil_humidity")},
                 onNavigateToTankWaterLevel = {navController.navigate(route = "tank_water_level")},
                 onNavigateToHealthCondition = {navController.navigate(route = "health_condition")},
-                onNavigateToLightStatus = {navController.navigate(route = "light_status")},
-                viewModel = homePlantViewModel)
+                viewModel = homePlantViewModel
+            )
         }
 
         composable("soil_humidity") {
@@ -132,7 +136,10 @@ fun PlantyApp() {
                 onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
-        composable("light_status") {
+        composable("light_status/{initialStatus}",arguments = listOf(
+            navArgument("initialStatus") { type = NavType.StringType }
+        )) { backStackEntry ->
+            val passedStatus = backStackEntry.arguments?.getString("initialStatus") ?: "OFF"
             val lightStatusViewModel: LightStatusViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
@@ -141,7 +148,9 @@ fun PlantyApp() {
                     }
                 }
             )
-            LightStatusScreen(viewModel = lightStatusViewModel,
+            LightStatusScreen(
+                initialLightStatus = passedStatus,
+                viewModel = lightStatusViewModel,
                 onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
     }

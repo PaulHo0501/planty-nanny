@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,12 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.data.RetrofitClient
@@ -38,10 +41,10 @@ import com.doubletrouble.myapplication.ui.viewmodel.HomePlantViewModel
 
 @Composable
 fun HomePlantScreen(
+    navController: NavHostController,
     viewModel: HomePlantViewModel,
     onNavigateToSoilHumidity: () -> Unit,
     onNavigateToTankWaterLevel: () -> Unit,
-    onNavigateToLightStatus: () -> Unit,
     onNavigateToHealthCondition: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -100,7 +103,7 @@ fun HomePlantScreen(
 
 
             if (uiState.isLoading) {
-                ProgressIndicator() // Or your custom loading animation
+                ProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
             } else if (uiState.errorMessage != null) {
                 Text(text = uiState.errorMessage!!, color = ScarletRush)
             } else {
@@ -157,7 +160,9 @@ fun HomePlantScreen(
                             title = "Light",
                             status = uiState.lightStatus.uppercase(),
                             label = "For ${uiState.lightHours} hours",
-                            onClick = onNavigateToLightStatus
+                            onClick = {
+                                navController.navigate("light_status_screen/${uiState.lightStatus}")
+                            }
                         )
                     }
                 }

@@ -52,7 +52,7 @@ import com.doubletrouble.myapplication.ui.viewmodel.LightStatusUiState
 import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
 
 @Composable
-fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: () -> Unit) {
+fun LightStatusScreen(initialLightStatus: String, viewModel : LightStatusViewModel, onNavigateToHomePlant: () -> Unit) {
     val uiStatePost by viewModel.uiStatePost.collectAsState()
     val uiStateGet by viewModel.uiStateGet.collectAsState()
     val uiStateGetLightStatus by viewModel.uiStateGetLightStatus.collectAsState()
@@ -63,7 +63,7 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
     var name by remember { mutableStateOf("") }
     var idealLightHours by remember { mutableIntStateOf(0) }
 
-    var lightStatus by remember { mutableStateOf("OFF") }
+    var lightStatus by remember { mutableStateOf(initialLightStatus) }
     var lightHours by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
