@@ -29,7 +29,7 @@ class TankWaterLevelViewModel(private val apiService: MyApiService): ViewModel()
 
     private val _realtimeWaterLevel = MutableStateFlow<Int?>(null)
     val realtimeWaterLevel: StateFlow<Int?> = _realtimeWaterLevel.asStateFlow()
-    private val baseUrlWs = BuildConfig.BASE_URL
+    private val baseUrlWs = BuildConfig.BASE_URL_WS
 
     private val stompClient = StompClient(OkHttpWebSocketClient())
 

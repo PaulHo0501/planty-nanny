@@ -28,6 +28,7 @@ import com.doubletrouble.myapplication.ui.viewmodel.AddPlantViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.HealthConditionViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
+import com.doubletrouble.myapplication.ui.viewmodel.TankWaterLevelViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +98,15 @@ fun PlantyApp() {
         }
 
         composable("tank_water_level") {
-            TankWaterLevelScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
+            val tankWaterLevelViewModel: TankWaterLevelViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return TankWaterLevelViewModel(RetrofitClient.apiService) as T
+                    }
+                }
+            )
+            TankWaterLevelScreen(viewModel = tankWaterLevelViewModel, onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("health_condition") {

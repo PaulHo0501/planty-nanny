@@ -117,7 +117,7 @@ fun TankWaterLevelScreen(viewModel: TankWaterLevelViewModel, onNavigateToHomePla
                 )
             }
             Text(
-                text = "Tank water level",
+                text = "Tank Water Level",
                 style = MaterialTheme.typography.headlineMedium,
                 color = BlackGrey
             )
@@ -204,24 +204,27 @@ fun TankWaterLevelScreen(viewModel: TankWaterLevelViewModel, onNavigateToHomePla
                 color = BlackGrey
             )
             Spacer(modifier = Modifier.height(52.dp))
-            Box(modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                .background(ScarletRush)) {
-                Row(modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Warning",
-                        tint = VanillaCream,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Text(
-                        text = "Please refill",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = VanillaCream
-                    )
+            if (originalFillPercentage < 10) {
+                Box(modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                    .background(ScarletRush)) {
+                    Row(modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Warning",
+                            tint = VanillaCream,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Text(
+                            text = "Please refill",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = VanillaCream
+                        )
+                    }
                 }
             }
+
         }
     }
 }
