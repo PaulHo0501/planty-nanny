@@ -25,6 +25,7 @@ import com.doubletrouble.myapplication.ui.screen.TankWaterLevelScreen
 import com.doubletrouble.myapplication.ui.screen.WelcomeScreen
 import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.viewmodel.AddPlantViewModel
+import com.doubletrouble.myapplication.ui.viewmodel.HealthConditionViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +91,16 @@ fun PlantyApp() {
         }
 
         composable("health_condition") {
-            HealthConditionScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
+            val healthViewModel: HealthConditionViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return HealthConditionViewModel(RetrofitClient.apiService) as T
+                    }
+                }
+            )
+            HealthConditionScreen(viewModel = healthViewModel,
+                onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("light_status") {
