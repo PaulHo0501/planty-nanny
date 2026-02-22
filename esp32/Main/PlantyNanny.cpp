@@ -218,7 +218,7 @@ int PlantyNanny::getWaterLevelPercentage() {
   delayMicroseconds(10);
   digitalWrite(triggerPin, LOW);
 
-  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+  long duration = pulseIn(echoPin, HIGH, 30000);
 
   if (duration == 0) {
     Serial.println("Ultrasonic timeout! Sensor disconnected or tank is too deep.");
@@ -227,7 +227,7 @@ int PlantyNanny::getWaterLevelPercentage() {
 
   int distanceCm = duration * 0.0343 / 2;
 
-  int percentage = map(distanceCm, TANK_EMPTY_CM, TANK_FULL_CM, 0, 100);
+  int percentage = map(distanceCm, tank_empty_cm, tank_full_cm, 0, 100);
 
   percentage = constrain(percentage, 0, 100);
 
@@ -235,10 +235,10 @@ int PlantyNanny::getWaterLevelPercentage() {
 
   if (percentage >= 0) {
     // Build the JSON payload: {"waterLevel": 85}
-    String jsonPayload = "{\"waterLevel\": " + String(waterLevel) + "}";
+    String jsonPayload = "{\"waterLevel\": " + String(percentage) + "}";
     
     // Send it to your Spring Boot topic
-    stompClient.sendMessage("/app/water-level", jsonPayload);
+    sendStompSend("/app/water-level", jsonPayload);
   }
 
   return percentage;
