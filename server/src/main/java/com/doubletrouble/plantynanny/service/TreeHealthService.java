@@ -43,7 +43,7 @@ public class TreeHealthService {
 
 
     // @Scheduled(cron = "0 0 10 * * ?")
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void scheduledDailyHealthCheck() {
         if (treeRepository.count() == 0) {
             System.out.println("No plants registered yet. Skipping scheduled ESP32 health check.");
