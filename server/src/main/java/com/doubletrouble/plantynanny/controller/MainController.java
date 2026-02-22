@@ -122,6 +122,27 @@ public class MainController {
         }
     }
 
+    @GetMapping("/light-status")
+    public ResponseEntity<String> getLightStatus() {
+        try {
+            // 2. Fetch the absolute newest record based on the createdAt timestamp
+            LightStatus latestRecord = lightStatusRepository.findTopByOrderByCreatedAtDesc();
+
+            // 3. Handle the result
+            if (latestRecord != null) {
+                // Returns "ON" or "OFF" based on your LightState enum
+                return ResponseEntity.ok(latestRecord.getLightStatus().name());
+            } else {
+                // Fallback: If the database is completely empty, assume the light is OFF
+                return ResponseEntity.ok("OFF");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error fetching light status: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping("/light-status")
     public ResponseEntity<String> updateLightStatus(@RequestParam("id") String id, @RequestParam("light-status") LightState lightStatus) {
         String response = lightStatusService.turnLightOnOff(id, lightStatus);

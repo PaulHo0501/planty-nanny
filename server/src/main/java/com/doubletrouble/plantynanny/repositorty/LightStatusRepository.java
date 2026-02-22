@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface LightStatusRepository extends JpaRepository<LightStatus, UUID> {
+    LightStatus findTopByOrderByCreatedAtDesc();
 }

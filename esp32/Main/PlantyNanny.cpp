@@ -2,6 +2,9 @@
 #include <HTTPClient.h>
 #include <WiFi.h>
 
+PlantyNanny::PlantyNanny() : strip(ledCount, lightPin, NEO_GRBW + NEO_KHZ800){
+}
+
 void PlantyNanny::cameraSetup() {
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -55,10 +58,40 @@ void PlantyNanny::cameraSetup() {
 }
 
 void PlantyNanny::pnSetup() {
-  waterServo.attach(waterServoPin);
-  lightServo.attach(lightServoPin);
   cameraSetup();
+  strip.begin();
+  strip.setBrightness(brightness);
+  strip.clear();
+  strip.show();
   Serial.println("[PN] Done Setup");
+}
+
+void getCurrentLightStatus() {
+  WiFiClient client;
+  HTTPClient http;
+  http.begin(client, getCurrentLightStatusLink);
+  int httpResponseCode = http.GET();
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    if (httpResponseCode == 200) {
+      String payload = http.getString();
+      Serial.print("Light Status received from server: ");
+      Serial.println(payload);
+      if (payload == "ON") {
+        commandLight(true);
+      } 
+      else if (payload == "OFF") {
+        commandLight(false);
+      }
+    } else {
+      Serial.println("Server reached, but returned an error.");
+    }
+  } else {
+    Serial.print("HTTP GET failed, error: ");
+    Serial.println(http.errorToString(httpResponseCode).c_str());
+  }
+  http.end();
 }
 
 int PlantyNanny::processCommand(String incomingCommand) {
@@ -68,7 +101,10 @@ int PlantyNanny::processCommand(String incomingCommand) {
     return commandWater();
   }
   else if (strcmp(doc["command"], "LIGHT") == 0) {
-    return commandLight();
+    if (strcmp(doc["action"], "ON") == 0)
+      return commandLight(true);
+    else 
+      return commandLight(false);
   }
   else if (strcmp(doc["command"], "PICTURE") == 0) {
     return commandPicture();
@@ -77,24 +113,24 @@ int PlantyNanny::processCommand(String incomingCommand) {
 }
 
 int PlantyNanny::commandWater() {
-  unsigned long last = millis();
-  waterServo.write(90);
-  unsigned long now = millis();
-  while (now - last <= interval) {
-    now = millis();
-  }
-  waterServo.write(0);
   return 0;
 }
 
-int PlantyNanny::commandLight() {
-  unsigned long last = millis();
-  lightServo.write(90);
-  unsigned long now = millis();
-  while (now - last <= interval) {
-    now = millis();
+int PlantyNanny::commandLight(bool status) {
+  Serial.print("[PN] Executing commandLight! Requested status: ");
+  Serial.println(status ? "ON" : "OFF");
+  if (status) {
+    strip.fill(strip.Color( 0, 0, 0, 255)); // True white (not RGB white)
+    strip.show();
+    lightStatus = true;
+    Serial.println("[PN] Light should now be ON (Pure White).");
   }
-  lightServo.write(0);
+  else {
+    lightStatus = false;
+    strip.clear(); // Set all pixel colors to 'off'
+    strip.show();
+    Serial.println("[PN] Light should now be OFF (Cleared).");
+  }
   return 0;
 }
 
