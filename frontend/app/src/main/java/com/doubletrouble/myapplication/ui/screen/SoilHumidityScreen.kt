@@ -82,7 +82,7 @@ fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: 
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            progress.animateTo(1f, animationSpec = tween(durationMillis = 3000))
+            progress.animateTo(1f, animationSpec = tween(durationMillis = 1500))
 
             // 2. Start the continuous watering loop
             while (isActive) { // This loop automatically dies when the user lets go
