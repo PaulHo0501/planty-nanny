@@ -33,8 +33,34 @@ class CacheManager(context: Context) {
         }
     }
 
+    fun setHealthCondition(healthCondition: String) {
+        prefs.edit().apply {
+            putString("cached_health_condition", healthCondition)
+            apply()
+        }
+    }
+
+    fun setHealthDescription(healthDescription: String) {
+        prefs.edit().apply {
+            putString("cached_health_description", healthDescription)
+            apply()
+        }
+    }
+
+    fun setHealthImage(imageUrl: String) {
+        prefs.edit().apply {
+            putString("cached_health_image", imageUrl)
+            apply()
+        }
+    }
+
     fun getCachedName(): String? = prefs.getString("cached_name", null)
     fun getCachedFact(): String? = prefs.getString("cached_fact", null)
     fun getCachedIdealLightHours(): Int = prefs.getInt("cached_ideal_light_hours", 0)
     fun getCachedIdealSoilHumidity(): Int = prefs.getInt("cached_ideal_soil_humidity", 0)
+    fun getCachedHealthCondition(): String? = prefs.getString("cached_health_condition", null)
+
+    fun getCachedHealthDescription(): String? = prefs.getString("cached_health_description", null)
+
+    fun getCachedHealthImage(): String? = prefs.getString("cached_health_image", null)
 }

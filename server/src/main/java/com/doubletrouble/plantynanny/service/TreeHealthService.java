@@ -47,7 +47,7 @@ public class TreeHealthService {
     public void scheduledDailyHealthCheck() {
         if (treeRepository.count() == 0) {
             System.out.println("No plants registered yet. Skipping scheduled ESP32 health check.");
-            return; // This instantly kills the method so nothing else runs!
+            return;
         }
         System.out.println("Starting automatic daily plant health check...");
         try {

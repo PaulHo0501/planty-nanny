@@ -2,20 +2,21 @@ package com.doubletrouble.plantynanny.controller;
 
 import com.doubletrouble.plantynanny.dto.TreeDto;
 import com.doubletrouble.plantynanny.dto.TreeHealthDto;
+import com.doubletrouble.plantynanny.entity.LightStatus;
 import com.doubletrouble.plantynanny.entity.Tree;
 import com.doubletrouble.plantynanny.entity.TreeHealth;
+import com.doubletrouble.plantynanny.enums.LightState;
+import com.doubletrouble.plantynanny.repositorty.LightStatusRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
 import com.doubletrouble.plantynanny.service.GeminiService;
 import com.doubletrouble.plantynanny.service.ImageBridgeService;
+import com.doubletrouble.plantynanny.service.LightStatusService;
 import com.doubletrouble.plantynanny.service.TreeHealthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -31,16 +32,25 @@ public class MainController {
     @Autowired
     private TreeHealthRepository treeHealthRepository;
 
+    @Autowired
+    private LightStatusRepository lightStatusRepository;
+
     private final GeminiService geminiService;
 
     private final ImageBridgeService imageBridgeService;
 
     private final TreeHealthService treeHealthService;
 
-    public MainController(GeminiService geminiService, ImageBridgeService imageBridgeService, TreeHealthService treeHealthService) {
+    private final LightStatusService lightStatusService;
+
+    public MainController(GeminiService geminiService,
+                          ImageBridgeService imageBridgeService,
+                          TreeHealthService treeHealthService,
+                          LightStatusService lightStatusService) {
         this.geminiService = geminiService;
         this.imageBridgeService = imageBridgeService;
         this.treeHealthService = treeHealthService;
+        this.lightStatusService = lightStatusService;
 
     }
 
@@ -110,6 +120,17 @@ public class MainController {
             System.err.println("Error processing tree request: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PostMapping("/light-status")
+    public ResponseEntity<String> updateLightStatus(@RequestParam("id") String id, @RequestParam("light-status") LightState lightStatus) {
+        String response = lightStatusService.turnLightOnOff(id, lightStatus);
+
+        LightStatus savedLightStatus = new LightStatus();
+        savedLightStatus.setLightStatus(lightStatus);
+
+        lightStatusRepository.save(savedLightStatus);
+        return ResponseEntity.ok(response);
     }
 
 }

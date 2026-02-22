@@ -72,7 +72,8 @@ fun HealthConditionScreen(viewModel : HealthConditionViewModel,
 
         is TreeHealthUiState.Loading -> {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .background(VanillaCream),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -118,7 +119,7 @@ fun HealthConditionScreen(viewModel : HealthConditionViewModel,
                 ) {
                     Text(
                         text = highlightedText(name) +
-                                AnnotatedString(" is in good health today"),
+                                AnnotatedString(" is in ${treeHealth!!.healthCondition} shape today"),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -152,7 +153,11 @@ fun HealthConditionScreen(viewModel : HealthConditionViewModel,
                         style = MaterialTheme.typography.labelSmall,
                         color = HunterGreen
                     )
-                    Button(text = "Re-diagnose", icon = Icons.Rounded.Refresh, onClick = {})
+                    Button(text = "Re-diagnose", icon = Icons.Rounded.Refresh, onClick = {
+                        viewModel.fetchTreeHealth(manual = true)
+                        cacheManager.setHealthCondition(treeHealth!!.healthCondition)
+                        cacheManager.setHealthDescription(treeHealth!!.description)
+                    })
                 }
             }
         }

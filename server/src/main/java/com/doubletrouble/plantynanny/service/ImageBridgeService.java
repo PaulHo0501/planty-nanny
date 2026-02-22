@@ -1,5 +1,6 @@
 package com.doubletrouble.plantynanny.service;
 
+import com.doubletrouble.plantynanny.enums.LightState;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,16 @@ public class ImageBridgeService {
     public ImageBridgeService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
+
+    public void toggleLight(String esp32Id, LightState lightStatus) {
+        String commandJson = String.format(
+                "{\"command\":\"LIGHT\", \"action\":\"%s\", \"id\":\"%s\"}",
+                lightStatus, esp32Id
+        );
+        messagingTemplate.convertAndSend("/topic/commands", commandJson);
+        System.out.println("Command sent to ESP32: " + commandJson);
+    }
+
 
     public CompletableFuture<String> triggerCaptureAndWait(String esp32Id) {
         CompletableFuture<String> future = new CompletableFuture<>();

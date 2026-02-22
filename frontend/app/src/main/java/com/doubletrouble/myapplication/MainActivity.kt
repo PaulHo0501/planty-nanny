@@ -63,7 +63,6 @@ fun PlantyApp() {
                 factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        // Pass your Retrofit singleton here!
                         return AddPlantViewModel(RetrofitClient.apiService) as T
                     }
                 }
