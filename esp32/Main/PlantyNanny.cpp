@@ -66,7 +66,7 @@ void PlantyNanny::pnSetup() {
   Serial.println("[PN] Done Setup");
 }
 
-void getCurrentLightStatus() {
+void PlantyNanny::getCurrentLightStatus() {
   WiFiClient client;
   HTTPClient http;
   http.begin(client, getCurrentLightStatusLink);
