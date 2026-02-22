@@ -1,11 +1,14 @@
 package com.doubletrouble.plantynanny.controller;
 
+import com.doubletrouble.plantynanny.dto.HumidityDto;
 import com.doubletrouble.plantynanny.dto.TreeDto;
 import com.doubletrouble.plantynanny.dto.TreeHealthDto;
+import com.doubletrouble.plantynanny.entity.Humidity;
 import com.doubletrouble.plantynanny.entity.LightStatus;
 import com.doubletrouble.plantynanny.entity.Tree;
 import com.doubletrouble.plantynanny.entity.TreeHealth;
 import com.doubletrouble.plantynanny.enums.LightState;
+import com.doubletrouble.plantynanny.repositorty.HumidityRepository;
 import com.doubletrouble.plantynanny.repositorty.LightStatusRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
@@ -13,8 +16,11 @@ import com.doubletrouble.plantynanny.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +38,9 @@ public class MainController {
     @Autowired
     private LightStatusRepository lightStatusRepository;
 
+    @Autowired
+    private HumidityRepository humidityRepository;
+
     private final GeminiService geminiService;
 
     private final ImageBridgeService imageBridgeService;
@@ -42,16 +51,20 @@ public class MainController {
 
     private final LightStatusAnalyticsService lightStatusAnalyticsService;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     public MainController(GeminiService geminiService,
                           ImageBridgeService imageBridgeService,
                           TreeHealthService treeHealthService,
                           LightStatusService lightStatusService,
-                          LightStatusAnalyticsService lightStatusAnalyticsService) {
+                          LightStatusAnalyticsService lightStatusAnalyticsService,
+                          SimpMessagingTemplate messagingTemplate) {
         this.geminiService = geminiService;
         this.imageBridgeService = imageBridgeService;
         this.treeHealthService = treeHealthService;
         this.lightStatusService = lightStatusService;
         this.lightStatusAnalyticsService = lightStatusAnalyticsService;
+        this.messagingTemplate = messagingTemplate;
     }
 
 
@@ -159,6 +172,21 @@ public class MainController {
 
         lightStatusRepository.save(savedLightStatus);
         return ResponseEntity.ok(response);
+    }
+
+    @MessageMapping("/humidity")
+    public void receiveHumidityData(HumidityDto payload) {
+        Humidity newRecord = new Humidity();
+        newRecord.setPercentage(payload.humidity());
+        humidityRepository.save(newRecord);
+        System.out.println("Received & Saved Humidity: " + payload.humidity()+ "%");
+        messagingTemplate.convertAndSend("/topic/humidity", payload);
+    }
+
+    @GetMapping("/humidity/history")
+    public List<Humidity> getHumidityHistory() {
+        System.out.println("Getting humidity history");
+        return humidityRepository.findTop8ByOrderByCreatedAtDesc();
     }
 
 }

@@ -46,6 +46,6 @@ public class LightStatusAnalyticsService {
                 totalSecondsOn += Duration.between(startOfDay, now).getSeconds();
             }
         }
-        return Math.round(totalSecondsOn);
+        return Math.round(totalSecondsOn / 3600.0f);
     }
 }
