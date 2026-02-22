@@ -1,5 +1,6 @@
 package com.doubletrouble.myapplication.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doubletrouble.myapplication.data.MyApiService
@@ -25,6 +26,21 @@ class SoilHumidityViewModel(private val apiService: MyApiService) : ViewModel() 
 
             } catch (e: Exception) {
                 println("Failed to fetch humidity history: ${e.message}")
+            }
+        }
+    }
+
+    fun triggerWatering() {
+        viewModelScope.launch {
+            try {
+                val response = apiService.triggerWaterPump()
+                if (response.isSuccessful) {
+                    Log.d("WATERING", "Water command sent perfectly!")
+                } else {
+                    Log.e("WATERING ERROR", "Server returned an error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("WATERING ERROR", "Failed to connect to server", e)
             }
         }
     }

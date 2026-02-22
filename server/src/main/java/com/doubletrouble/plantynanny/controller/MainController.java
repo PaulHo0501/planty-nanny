@@ -213,4 +213,20 @@ public class MainController {
         System.out.println("Received & Saved Tank Water Level: " + payload.waterLevel() + "%");
         messagingTemplate.convertAndSend("/topic/water-level", payload);
     }
+
+    @PostMapping("/water")
+    public ResponseEntity<String> triggerWatering() {
+        try {
+            // ... and the server broadcasts the command to the ESP32!
+            String commandJson = "{\"command\":\"WATER\", \"id\":\"esp32_cam_1\"}";
+            messagingTemplate.convertAndSend("/topic/commands", commandJson);
+
+            System.out.println("Manual WATER command broadcasted to ESP32.");
+            return ResponseEntity.ok("Watering command sent successfully");
+
+        } catch (Exception e) {
+            System.err.println("Failed to send water command: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error sending command");
+        }
+    }
 }

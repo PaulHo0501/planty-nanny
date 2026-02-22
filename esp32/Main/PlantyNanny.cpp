@@ -72,6 +72,7 @@ void PlantyNanny::pnSetup() {
     Serial.println(ss.getVersion(), HEX);
   }
   setupUltrasonic();
+  setupPump();
   Serial.println("[PN] Done Setup");
 }
 
@@ -128,6 +129,10 @@ int PlantyNanny::processCommand(String incomingCommand) {
 }
 
 int PlantyNanny::commandWater() {
+  Serial.println("Action: WATER command received! Activating pump...");
+  digitalWrite(pumpPin, HIGH);
+  isPumpRunning = true;
+  pumpStartTime = millis();
   return 0;
 }
 
@@ -244,4 +249,17 @@ int PlantyNanny::getWaterLevelPercentage() {
   }
 
   return percentage;
+}
+
+void PlantyNanny::setupPump() {
+  pinMode(pumpPin, OUTPUT);
+  digitalWrite(pumpPin, LOW); 
+}
+
+void PlantyNanny::handlePumpTimer() {
+  if (isPumpRunning && (millis() - pumpStartTime >= PUMP_DURATION_MS)) {
+    digitalWrite(pumpPin, LOW); // Turn the relay OFF
+    isPumpRunning = false;
+    Serial.println("Pump turned OFF (Safety timer finished).");
+  }
 }

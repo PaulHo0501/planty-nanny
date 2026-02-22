@@ -1,8 +1,6 @@
 package com.doubletrouble.myapplication.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -50,13 +48,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doubletrouble.myapplication.R
 import com.doubletrouble.myapplication.data.CacheManager
 import com.doubletrouble.myapplication.data.model.Humidity
-import com.doubletrouble.myapplication.ui.component.Chart
 import com.doubletrouble.myapplication.ui.component.Button
+import com.doubletrouble.myapplication.ui.component.Chart
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.HunterGreen
 import com.doubletrouble.myapplication.ui.theme.MutedOlive
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -81,14 +82,21 @@ fun SoilHumidityScreen(viewModel: SoilHumidityViewModel, onNavigateToHomePlant: 
     }
 
     LaunchedEffect(isPressed) {
-        while (isPressed) {
-            progress.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1500, easing = LinearEasing)
-            )
-            Log.d("WATER", "Watering triggered")
+        if (isPressed) {
+            // 1. Start the visual border animation (fills over 3 seconds)
+            launch {
+                progress.animateTo(1f, animationSpec = tween(durationMillis = 3000))
+            }
+
+            // 2. Start the continuous watering loop
+            while (isActive) { // This loop automatically dies when the user lets go
+                viewModel.triggerWatering()
+                delay(3000)
+            }
+        } else {
+            // 3. User let go! Instantly reset the animation
+            progress.snapTo(0f)
         }
-        progress.snapTo(0f)
     }
 
     Column(

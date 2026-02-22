@@ -3,6 +3,7 @@ package com.doubletrouble.myapplication.data
 import com.doubletrouble.myapplication.data.model.Humidity
 import com.doubletrouble.myapplication.data.model.Tree
 import com.doubletrouble.myapplication.data.model.TreeHealth
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -39,4 +40,7 @@ interface MyApiService {
         @Query("id") cameraId: String = "esp32_cam_1",
         @Query("light-status") lightStatus : String = "ON"
     ) :  String
+
+    @POST("/api/tree/water")
+    suspend fun triggerWaterPump(): Response<Unit>
 }

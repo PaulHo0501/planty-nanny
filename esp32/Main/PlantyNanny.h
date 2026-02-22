@@ -35,9 +35,11 @@ private:
   const int tank_full_cm = 2;
 
   // water pump
-  int pumpPin = 4;
+  int pumpPin = 32;
+  unsigned long pumpStartTime = 0;
+  bool isPumpRunning = false;
+  const unsigned long PUMP_DURATION_MS = 2000;
 
-  const unsigned long interval = 5000; // Doing something for 5 seconds
   const char* uploadLink = "http://192.168.1.89:8080/api/camera/upload";
   const char* getCurrentLightStatusLink = "http://192.168.1.89:8080/api/tree/light-status";
 
@@ -55,6 +57,8 @@ public:
   void captureImage();
   void getCurrentLightStatus();
   int getHumidityPercentage();
+  void setupPump();
+  void handlePumpTimer();
 };
 
 #endif
