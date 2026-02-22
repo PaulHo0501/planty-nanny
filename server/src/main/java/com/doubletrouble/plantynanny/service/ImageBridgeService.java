@@ -23,6 +23,7 @@ public class ImageBridgeService {
                 lightStatus, esp32Id
         );
         messagingTemplate.convertAndSend("/topic/commands", commandJson);
+        messagingTemplate.convertAndSend("/topic/light-status", lightStatus.name());
         System.out.println("Command sent to ESP32: " + commandJson);
     }
 

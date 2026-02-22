@@ -1,6 +1,8 @@
 package com.doubletrouble.myapplication.ui.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -51,7 +53,9 @@ import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
 
 @Composable
 fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: () -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiStatePost by viewModel.uiStatePost.collectAsState()
+    val uiStateGet by viewModel.uiStateGet.collectAsState()
+    val uiStateGetLightStatus by viewModel.uiStateGetLightStatus.collectAsState()
 
     val context = LocalContext.current
     val cacheManager = remember { CacheManager(context) }
@@ -59,21 +63,45 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
     var name by remember { mutableStateOf("") }
     var idealLightHours by remember { mutableIntStateOf(0) }
 
-    val hoursOn = 2
-    var lightStatus by remember { mutableStateOf("OFF") }
+    var lightStatus by remember { mutableStateOf("") }
+    var lightHours by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         name = cacheManager.getCachedName() ?: ""
         idealLightHours = cacheManager.getCachedIdealLightHours()
+        viewModel.getTodayLightHours()
+        viewModel.getTodayLightStatus()
     }
 
-    LaunchedEffect(uiState) {
-        lightStatus = if (uiState is LightStatusUiState.Success) {
-            (uiState as LightStatusUiState.Success).lightStatus
-        } else {
-            "OFF"
+    LaunchedEffect(uiStateGetLightStatus) {
+        when (uiStateGetLightStatus) {
+            is LightStatusUiState.SuccessGetLightStatus -> {
+                lightStatus = (uiStateGetLightStatus as LightStatusUiState.SuccessGetLightStatus).lightStatus
+            }
+            is LightStatusUiState.Error -> {
+                lightStatus = ""
+            }
+            else -> { }
         }
     }
+
+    LaunchedEffect(uiStatePost) {
+        lightStatus = if (uiStatePost is LightStatusUiState.SuccessPost) {
+            (uiStatePost as LightStatusUiState.SuccessPost).lightStatus
+        } else {
+            ""
+        }
+    }
+
+    LaunchedEffect(uiStateGet) {
+        lightHours = if (uiStateGet is LightStatusUiState.SuccessGet) {
+            (uiStateGet as LightStatusUiState.SuccessGet).lightHours
+        } else {
+            0
+        }
+    }
+
+
 
     Column(
         modifier = Modifier
@@ -124,8 +152,12 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
                 AnimatedContent(
                     targetState = lightStatus,
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(1000)) togetherWith fadeOut(animationSpec = tween(500)) using
-                                SizeTransform(clip = false)
+                        if (initialState == "") {
+                            EnterTransition.None togetherWith ExitTransition.None using SizeTransform(clip = false)
+                        } else {
+                            fadeIn(animationSpec = tween(1000)) togetherWith fadeOut(animationSpec = tween(500)) using
+                                    SizeTransform(clip = false)
+                        }
                     }
                 ) { targetStatus ->
                     LottieDisplay(
@@ -142,7 +174,7 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
                     Text(
                         text = AnnotatedString("Light has been ") +
                                 highlightedText("ON ", HunterGreen) +
-                                AnnotatedString("for $hoursOn hours"),
+                                AnnotatedString("for $lightHours hours"),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(

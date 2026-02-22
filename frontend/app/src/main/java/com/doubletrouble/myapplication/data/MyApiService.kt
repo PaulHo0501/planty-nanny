@@ -21,6 +21,12 @@ interface MyApiService {
         @Query("manual") manual: Boolean = false,
     ): TreeHealth
 
+    @GET("api/tree/today-hours")
+    suspend fun getTodayLightHours() : Int
+
+    @GET("api/tree/light-status")
+    suspend fun getTodayLightStatus() : String
+
     @POST("api/tree/light-status")
     suspend fun postLightStatus(
         @Query("id") cameraId: String = "esp32_cam_1",

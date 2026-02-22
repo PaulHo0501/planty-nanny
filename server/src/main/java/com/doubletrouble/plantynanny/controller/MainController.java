@@ -9,10 +9,7 @@ import com.doubletrouble.plantynanny.enums.LightState;
 import com.doubletrouble.plantynanny.repositorty.LightStatusRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeHealthRepository;
 import com.doubletrouble.plantynanny.repositorty.TreeRepository;
-import com.doubletrouble.plantynanny.service.GeminiService;
-import com.doubletrouble.plantynanny.service.ImageBridgeService;
-import com.doubletrouble.plantynanny.service.LightStatusService;
-import com.doubletrouble.plantynanny.service.TreeHealthService;
+import com.doubletrouble.plantynanny.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,15 +40,18 @@ public class MainController {
 
     private final LightStatusService lightStatusService;
 
+    private final LightStatusAnalyticsService lightStatusAnalyticsService;
+
     public MainController(GeminiService geminiService,
                           ImageBridgeService imageBridgeService,
                           TreeHealthService treeHealthService,
-                          LightStatusService lightStatusService) {
+                          LightStatusService lightStatusService,
+                          LightStatusAnalyticsService lightStatusAnalyticsService) {
         this.geminiService = geminiService;
         this.imageBridgeService = imageBridgeService;
         this.treeHealthService = treeHealthService;
         this.lightStatusService = lightStatusService;
-
+        this.lightStatusAnalyticsService = lightStatusAnalyticsService;
     }
 
 
@@ -122,18 +122,25 @@ public class MainController {
         }
     }
 
+    @GetMapping("/today-hours")
+    public ResponseEntity<Integer> getTodayOnHours() {
+        try {
+            int hours = lightStatusAnalyticsService.getTodayTotalOnHours();
+            System.out.println("Today hours: " + hours);
+            return ResponseEntity.ok(hours);
+        } catch (Exception e) {
+            System.err.println("Failed to calculate hours: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("/light-status")
     public ResponseEntity<String> getLightStatus() {
         try {
-            // 2. Fetch the absolute newest record based on the createdAt timestamp
             LightStatus latestRecord = lightStatusRepository.findTopByOrderByCreatedAtDesc();
-
-            // 3. Handle the result
             if (latestRecord != null) {
-                // Returns "ON" or "OFF" based on your LightState enum
                 return ResponseEntity.ok(latestRecord.getLightStatus().name());
             } else {
-                // Fallback: If the database is completely empty, assume the light is OFF
                 return ResponseEntity.ok("OFF");
             }
 
