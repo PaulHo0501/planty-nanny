@@ -63,7 +63,7 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
     var name by remember { mutableStateOf("") }
     var idealLightHours by remember { mutableIntStateOf(0) }
 
-    var lightStatus by remember { mutableStateOf("") }
+    var lightStatus by remember { mutableStateOf("OFF") }
     var lightHours by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
@@ -79,25 +79,30 @@ fun LightStatusScreen(viewModel : LightStatusViewModel, onNavigateToHomePlant: (
                 lightStatus = (uiStateGetLightStatus as LightStatusUiState.SuccessGetLightStatus).lightStatus
             }
             is LightStatusUiState.Error -> {
-                lightStatus = ""
             }
             else -> { }
         }
     }
 
     LaunchedEffect(uiStatePost) {
-        lightStatus = if (uiStatePost is LightStatusUiState.SuccessPost) {
-            (uiStatePost as LightStatusUiState.SuccessPost).lightStatus
-        } else {
-            ""
+        when (uiStatePost) {
+            is LightStatusUiState.SuccessPost -> {
+                lightStatus = (uiStatePost as LightStatusUiState.SuccessPost).lightStatus
+            }
+            is LightStatusUiState.Error -> {
+            }
+            else -> {
+            }
         }
     }
 
     LaunchedEffect(uiStateGet) {
-        lightHours = if (uiStateGet is LightStatusUiState.SuccessGet) {
-            (uiStateGet as LightStatusUiState.SuccessGet).lightHours
-        } else {
-            0
+        when (uiStateGet) {
+            is LightStatusUiState.SuccessGet -> {
+                lightHours = (uiStateGet as LightStatusUiState.SuccessGet).lightHours
+            }
+            else -> {
+            }
         }
     }
 
