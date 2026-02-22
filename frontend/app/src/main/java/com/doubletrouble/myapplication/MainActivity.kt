@@ -27,6 +27,7 @@ import com.doubletrouble.myapplication.ui.theme.PlantyNannyTheme
 import com.doubletrouble.myapplication.ui.viewmodel.AddPlantViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.HealthConditionViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.LightStatusViewModel
+import com.doubletrouble.myapplication.ui.viewmodel.SoilHumidityViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +84,16 @@ fun PlantyApp() {
         }
 
         composable("soil_humidity") {
-            SoilHumidityScreen(onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
+            val humidityViewModel: SoilHumidityViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return SoilHumidityViewModel(RetrofitClient.apiService) as T
+                    }
+                }
+            )
+            SoilHumidityScreen(viewModel = humidityViewModel,
+                onNavigateToHomePlant = {navController.navigate(route = "home_plant")})
         }
 
         composable("tank_water_level") {
