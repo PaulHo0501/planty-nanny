@@ -32,6 +32,9 @@ interface MyApiService {
     @GET("api/tree/water-level")
     suspend fun getWaterLevel() : Int
 
+    @GET("api/tree/humidity")
+    suspend fun getHumidity() : Int
+
     @GET("api/tree/humidity/history")
     suspend fun getHumidityHistory(): List<Humidity>
 

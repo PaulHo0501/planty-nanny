@@ -23,6 +23,7 @@ squareupRetrofitVersion = "3.0.0"
 kotlinxSerializationJson = "1.10.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 roomKtx = "2.8.4"
+material3 = "1.4.0"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
@@ -57,6 +58,7 @@ converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", versi
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

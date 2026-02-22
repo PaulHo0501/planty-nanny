@@ -14,8 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -51,6 +52,9 @@ public class MainController {
     private final LightStatusAnalyticsService lightStatusAnalyticsService;
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    private Instant lastWateredTime = Instant.MIN;
+
 
     public MainController(GeminiService geminiService,
                           ImageBridgeService imageBridgeService,
@@ -197,6 +201,46 @@ public class MainController {
         humidityRepository.save(newRecord);
         System.out.println("Received & Saved Humidity: " + payload.humidity()+ "%");
         messagingTemplate.convertAndSend("/topic/humidity", payload);
+
+        try {
+            Tree myPlant = treeRepository.findAll().getFirst();
+
+            int idealHumidity = myPlant.getHumidity_level();
+            int currentHumidity = payload.humidity();
+
+            if (currentHumidity < (idealHumidity - 10)) {
+                long minutesSinceLastWater = Duration.between(lastWateredTime, Instant.now()).toMinutes();
+                long COOLDOWN_MINUTES = 120;
+                if (minutesSinceLastWater >= COOLDOWN_MINUTES) {
+                    System.out.println("Auto-watering triggered! Soil at " + currentHumidity + "%.");
+                    String waterCommand = "{\"command\":\"WATER\", \"id\":\"esp32_cam_1\"}";
+                    messagingTemplate.convertAndSend("/topic/commands", waterCommand);
+                    lastWateredTime = Instant.now();
+                } else {
+                    System.out.println("Soil is dry, but pump is on cooldown. " +
+                            (COOLDOWN_MINUTES - minutesSinceLastWater) + " minutes remaining.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Failed to process auto-watering: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/humidity")
+    public ResponseEntity<Integer> getHumidity() {
+        try {
+            Humidity latestRecord = humidityRepository.findTopByOrderByCreatedAtDesc();
+            if (latestRecord != null) {
+                return ResponseEntity.ok(latestRecord.getPercentage());
+            } else {
+                return ResponseEntity.ok(0);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error fetching soil humidity: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/humidity/history")

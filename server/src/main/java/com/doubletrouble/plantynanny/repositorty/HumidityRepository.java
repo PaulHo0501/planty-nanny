@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface HumidityRepository extends JpaRepository<Humidity, UUID> {
     List<Humidity> findTop8ByOrderByCreatedAtDesc();
+    Humidity findTopByOrderByCreatedAtDesc();
 }
