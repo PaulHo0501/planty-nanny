@@ -33,9 +33,9 @@ class CacheManager(context: Context) {
         }
     }
 
-    fun setHealthCondition(healthCondition: Boolean) {
+    fun setHealthCondition(healthCondition: String) {
         prefs.edit().apply {
-            putString("cached_health_condition", healthCondition.toString())
+            putString("cached_health_condition", healthCondition)
             apply()
         }
     }

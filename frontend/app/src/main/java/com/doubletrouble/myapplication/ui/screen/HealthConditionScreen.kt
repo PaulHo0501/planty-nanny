@@ -45,7 +45,6 @@ import com.doubletrouble.myapplication.ui.component.Button
 import com.doubletrouble.myapplication.ui.component.ProgressIndicator
 import com.doubletrouble.myapplication.ui.theme.BlackGrey
 import com.doubletrouble.myapplication.ui.theme.HunterGreen
-import com.doubletrouble.myapplication.ui.theme.TeaGreen
 import com.doubletrouble.myapplication.ui.theme.VanillaCream
 import com.doubletrouble.myapplication.ui.viewmodel.HealthConditionViewModel
 import com.doubletrouble.myapplication.ui.viewmodel.TreeHealthUiState
@@ -120,7 +119,7 @@ fun HealthConditionScreen(viewModel : HealthConditionViewModel,
                 ) {
                     Text(
                         text = highlightedText(name) +
-                                AnnotatedString(" is in ${if (treeHealth!!.healthCondition) "good" else "bad"} shape today"),
+                                AnnotatedString(" is in ${treeHealth!!.healthCondition} shape today"),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()
                     )

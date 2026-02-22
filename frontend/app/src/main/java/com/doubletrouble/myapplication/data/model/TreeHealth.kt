@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TreeHealth(val imageUrl : String,
-                      val healthCondition : Boolean,
+                      val healthCondition : String,
                       val description : String)
