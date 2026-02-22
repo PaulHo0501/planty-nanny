@@ -1,6 +1,8 @@
 package com.doubletrouble.plantynanny.dto;
 
+import com.doubletrouble.plantynanny.enums.HealthCondition;
+
 public record TreeHealthDto(String imageUrl,
-                            Boolean condition,
+                            HealthCondition healthCondition,
                             String description) {
 }
