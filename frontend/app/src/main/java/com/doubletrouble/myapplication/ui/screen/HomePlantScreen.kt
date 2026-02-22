@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -94,19 +93,22 @@ fun HomePlantScreen(
                 .fillMaxSize()
                 .background(VanillaCream)
         )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 50.dp, horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
 
-
-            if (uiState.isLoading) {
-                ProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
-            } else if (uiState.errorMessage != null) {
-                Text(text = uiState.errorMessage!!, color = ScarletRush)
-            } else {
+        if (uiState.isLoading) {
+            Column (
+                modifier = Modifier.fillMaxSize().padding(vertical = 50.dp, horizontal = 16.dp),
+                verticalArrangement = Arrangement.Center,
+            )
+            {ProgressIndicator(modifier = Modifier.fillMaxWidth())}
+        } else if (uiState.errorMessage != null) {
+            Text(text = uiState.errorMessage!!, color = ScarletRush)
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 50.dp, horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 Text(
                     text = "Your $name is ${if (uiState.healthCondition == "GOOD") "thriving" else "surviving"}",
                     style = MaterialTheme.typography.headlineMedium,
@@ -151,7 +153,8 @@ fun HomePlantScreen(
                     item {
                         CustomCard(
                             title = "Health Condition",
-                            status = uiState.healthCondition.lowercase().replaceFirstChar { it.uppercase() },
+                            status = uiState.healthCondition.lowercase()
+                                .replaceFirstChar { it.uppercase() },
                             onClick = onNavigateToHealthCondition
                         )
                     }
@@ -161,7 +164,7 @@ fun HomePlantScreen(
                             status = uiState.lightStatus.uppercase(),
                             label = "For ${uiState.lightHours} hours",
                             onClick = {
-                                navController.navigate("light_status_screen/${uiState.lightStatus}")
+                                navController.navigate("light_status/${uiState.lightStatus}")
                             }
                         )
                     }

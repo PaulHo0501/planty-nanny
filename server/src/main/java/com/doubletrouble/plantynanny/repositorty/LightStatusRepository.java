@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface LightStatusRepository extends JpaRepository<LightStatus, UUID> {
     LightStatus findTopByOrderByCreatedAtDesc();
     List<LightStatus> findByCreatedAtBetweenOrderByCreatedAtAsc(LocalDateTime start, LocalDateTime end);
+    LightStatus findTopByCreatedAtBeforeOrderByCreatedAtDesc(LocalDateTime time);
 }
