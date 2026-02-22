@@ -63,6 +63,14 @@ void PlantyNanny::pnSetup() {
   strip.setBrightness(brightness);
   strip.clear();
   strip.show();
+  Wire.begin(soilSDA, soilSCL);
+  if (!ss.begin(0x36)) {
+    Serial.println("ERROR! seesaw not found");
+    while(1) delay(1);
+  } else {
+    Serial.print("seesaw started! version: ");
+    Serial.println(ss.getVersion(), HEX);
+  }
   Serial.println("[PN] Done Setup");
 }
 
@@ -109,6 +117,9 @@ int PlantyNanny::processCommand(String incomingCommand) {
   else if (strcmp(doc["command"], "PICTURE") == 0) {
     return commandPicture();
   }
+  else if (strcmp(doc["command"], "MEASURE") == 0) {
+    return commandMeasure();
+  }
   return 0;
 }
 
@@ -135,7 +146,22 @@ int PlantyNanny::commandLight(bool status) {
 }
 
 int PlantyNanny::commandMeasure() {
+  int percentage = getHumidityPercentage();
+  JsonDocument doc;
+  doc["humidity"] = percentage;
+  String output;
+  serializeJson(doc, output);
+  sendStompSend("/app/humidity", output);
   return 0;
+}
+
+int PlantyNanny::getHumidityPercentage() {
+  uint16_t rawMoisture = ss.touchRead(0);
+  int mappedPercentage = map(rawMoisture, minimumCap, maximumCap, 0, 100);
+  int finalPercentage = constrain(mappedPercentage, 0, 100);
+  Serial.print("Raw: "); Serial.print(rawMoisture);
+  Serial.print(" | Humidity: "); Serial.print(finalPercentage); Serial.println("%");
+  return finalPercentage;
 }
 
 void PlantyNanny::captureImage() {
