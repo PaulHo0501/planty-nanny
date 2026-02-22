@@ -7,6 +7,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "esp_camera.h"
 #include "board_config.h"
+#include <Wire.h>
+#include "Adafruit_seesaw.h"
 
 extern void sendStompSend(String destination, String jsonBody);
 
@@ -19,12 +21,18 @@ private:
   bool lightStatus = false;
   Adafruit_NeoPixel strip;
 
+  // humidity sensor
+  int soilSDA = 14;
+  int soilSCL = 15;
+  const int minimumCap = 300;
+  const int maximumCap = 800;
+  Adafruit_seesaw ss;
+
+
   const unsigned long interval = 5000; // Doing something for 5 seconds
   const char* uploadLink = "http://192.168.1.89:8080/api/camera/upload";
   const char* getCurrentLightStatusLink = "http://192.168.1.89:8080/api/tree/light-status";
-  // camera config here
   // ultrasonic sensor here
-  // soil sensor here
 public:
   PlantyNanny();
   void cameraSetup();
@@ -36,6 +44,7 @@ public:
   int commandPicture();
   void captureImage();
   void getCurrentLightStatus();
+  int getHumidityPercentage();
 };
 
 #endif
