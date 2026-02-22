@@ -1,9 +1,7 @@
 package com.doubletrouble.plantynanny.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.doubletrouble.plantynanny.enums.HealthCondition;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,7 +17,9 @@ public class TreeHealth {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String imageUrl;
-    Boolean condition;
+    HealthCondition healthCondition;
+
+    @Column(columnDefinition = "TEXT")
     String description;
     @CreatedDate
     private LocalDateTime createdAt;

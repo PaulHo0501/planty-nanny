@@ -93,7 +93,7 @@ public class MainController {
 
             TreeHealth health =  new TreeHealth();
             health.setImageUrl(s3Url);
-            health.setCondition(analysisData.condition());
+            health.setHealthCondition(analysisData.healthCondition());
             health.setDescription(analysisData.description());
 
             TreeHealth savedHealthCondition = treeHealthRepository.save(health);
